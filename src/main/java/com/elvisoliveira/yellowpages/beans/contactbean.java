@@ -1,4 +1,4 @@
-package com.elvisoliveira.yellowpages;
+package com.elvisoliveira.yellowpages.beans;
 
 
 public class contactbean {
