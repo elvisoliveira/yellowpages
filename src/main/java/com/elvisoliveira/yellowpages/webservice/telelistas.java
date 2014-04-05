@@ -1,7 +1,6 @@
 package com.elvisoliveira.yellowpages.webservice;
 
 import com.elvisoliveira.yellowpages.beans.contactbean;
-import com.elvisoliveira.yellowpages.ui.mainWindow;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -14,19 +13,19 @@ import org.jsoup.select.Elements;
 
 public class telelistas {
 
-    public static void telelistas(String initName) throws UnsupportedEncodingException, IOException {
+    public static List<contactbean> telelistas(String initName) throws UnsupportedEncodingException, IOException {
 
         String name = URLEncoder.encode(initName, "ISO-8859-1");
 
         String url = String.format("http://www.telelistas.net/templates/resultado_busca.aspx?q=&orgm=0&cod_localidade=31000&atividade=&nome=%s&uf_busca=mg&image.x=38&image.y=3", name);
+
+        List<contactbean> contactsList = new ArrayList();
 
         Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
         if (doc.select("p.tit_erro").hasText()) {
             System.out.println("Não há resultados para este nome.");
         } else {
-
-            List<contactbean> contactsList = new ArrayList();
 
             Elements contacts = doc.select("div#Content_Regs > table[bgcolor=#f0f0f0]");
 
@@ -46,9 +45,9 @@ public class telelistas {
 
             }
 
-            mainWindow.setContacts(contactsList);
-
         }
+
+        return contactsList;
     }
 
 }
