@@ -20,12 +20,11 @@ import net.miginfocom.swing.MigLayout;
 
 public class mainWindow {
 
-    private static JScrollPane conatctsListing;
+    private static JScrollPane contactsListing;
     private static JTree tree;
     private static JTextField searchInput;
     private static JButton searchButton;
     private static List<String> strings;
-    private static JScrollPane jtree;
 
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
@@ -47,7 +46,7 @@ public class mainWindow {
             @Override
             public void actionPerformed(ActionEvent evt) {
                 try {
-                    changeContacts(searchInput.getText());
+                    contactsListing.setViewportView(changeContacts(searchInput.getText()));
                 } catch (IOException ex) {
                     Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -57,9 +56,10 @@ public class mainWindow {
         panel.add(searchButton, "wrap");
 
         //
-        jtree = changeContacts(name);
+        contactsListing = new JScrollPane();
+        contactsListing.setViewportView(changeContacts(name));
 
-        panel.add(jtree);
+        panel.add(contactsListing);
 
         // Window configuration
         window.add(panel);
@@ -71,8 +71,7 @@ public class mainWindow {
 
     }
 
-    public static JScrollPane changeContacts(String name) throws IOException {
-        // Contacts List
+    public static JTree changeContacts(String name) throws IOException {
 
         List<contactbean> contactsList = telelistas.telelistas(name);
 
@@ -92,13 +91,11 @@ public class mainWindow {
 
         }
 
+       
         tree.setModel(new DefaultTreeModel(treeNode));
         tree.setAutoscrolls(true);
 
-        conatctsListing = new JScrollPane();
-        conatctsListing.setViewportView(tree);
-
-        return conatctsListing;
+        return tree;
 
     }
 
