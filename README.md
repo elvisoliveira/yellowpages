@@ -1,6 +1,6 @@
 ## YellowPages
 
-![alt tag](http://i.imgur.com/HsYxOYA.jpg)
+![alt tag](http://i.imgur.com/4SMvF03.png)
 
 How to manually run:
 
