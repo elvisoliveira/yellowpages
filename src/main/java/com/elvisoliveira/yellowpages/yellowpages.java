@@ -10,16 +10,21 @@ public class yellowpages {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException {
 
+// Metal
+// Nimbus
+// CDE/Motif
+// GTK+
+        
         // Ninbus look and feel
         for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if ("Nimbus".equals(info.getName())) {
+            if ("GTK+".equals(info.getName())) {
                 UIManager.setLookAndFeel(info.getClassName());
                 break;
             }
         }
 
         // App startup
-        mainWindow.setContacts("Maria");
+        mainWindow.setContacts("");
 
     }
 

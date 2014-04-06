@@ -17,7 +17,7 @@ public class contactbean {
      * @param Name the Name to set
      */
     public void setName(String Name) {
-        this.Name = Name;
+        this.Name = Name.trim();
     }
 
     /**
@@ -31,7 +31,7 @@ public class contactbean {
      * @param Address the Address to set
      */
     public void setAddress(String Address) {
-        this.Address = Address;
+        this.Address = Address.trim();
     }
 
     /**
@@ -45,7 +45,7 @@ public class contactbean {
      * @param Link the Link to set
      */
     public void setLink(String Link) {
-        this.Link = Link;
+        this.Link = Link.trim();
     }
 
 }
