@@ -3,7 +3,6 @@ package com.elvisoliveira.yellowpages.ui;
 import com.elvisoliveira.yellowpages.beans.contactbean;
 import com.elvisoliveira.yellowpages.webservice.telelistas;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -24,7 +23,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import net.miginfocom.swing.MigLayout;
 import org.jsoup.nodes.Document;
 

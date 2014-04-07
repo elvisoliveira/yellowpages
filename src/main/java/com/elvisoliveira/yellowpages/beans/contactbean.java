@@ -1,7 +1,7 @@
 package com.elvisoliveira.yellowpages.beans;
 
-
 public class contactbean {
+
     private String Name;
     private String Address;
     private String Link;

@@ -39,17 +39,22 @@ public class telelistas {
         Elements contacts = doc.select("div#Content_Regs > table");
 
         for (Element contact : contacts) {
-
+            // get information string
             String contactName = contact.select("td.text_resultado_ib > a").text();
             String contactAddress = contact.select("td.text_endereco_ib").text();
             String contactLink = contact.select("td.text_resultado_ib a").attr("href");
-
+            
+            // 
             contactbean foreigner = new contactbean();
 
+            // 
             foreigner.setAddress(contactAddress);
             foreigner.setLink(contactLink);
             foreigner.setName(contactName);
 
+            // set google information
+            
+            
             contactsList.add(foreigner);
 
         }
