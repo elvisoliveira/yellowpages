@@ -5,31 +5,26 @@ import com.elvisoliveira.yellowpages.webservice.telelistas;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTree;
-import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
+import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.jsoup.nodes.Document;
 
 public class mainWindow {
 
     private static JScrollPane contactsListing;
-    private static JTree tree;
+    private static JTable table;
+    private static DefaultTableModel contactsTable;
     private static JTextField searchInput;
     private static JButton searchButton;
     private static List<String> strings;
@@ -42,7 +37,7 @@ public class mainWindow {
             // define the path of the image
             "%s/src/main/java/%s/ajax-loader.gif",
             // return the project production directory
-            System.getProperty("user.dir").replace(".", "/"),
+            System.getProperty("user.dir").replace(".", "§").replace(".", "/").replace("§", "."),
             // return the package as a directory
             new mainWindow().getClass().getPackage().getName().replace(".", "/")
     );
@@ -103,6 +98,7 @@ public class mainWindow {
 
     }
 
+    @SuppressWarnings("empty-statement")
     public static void changeContacts(String name) throws IOException {
         // make the request and return the Document
         Document document = telelistas.generateDocument(name);
@@ -115,36 +111,24 @@ public class mainWindow {
         else {
             List<contactbean> contactsList = telelistas.telelistas(document);
 
-            tree = new JTree();
-
-            DefaultMutableTreeNode treeNode = new DefaultMutableTreeNode("Contacts");
+            table = new JTable();
+            
+            contactsTable = new DefaultTableModel() {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false;
+                }
+            };
+            contactsTable.addColumn("Nome");
+            contactsTable.addColumn("Endereço");
 
             for (contactbean object : contactsList) {
-                DefaultMutableTreeNode nodeName = new DefaultMutableTreeNode(object.getName());
-                DefaultMutableTreeNode nodeAddress = new DefaultMutableTreeNode(object.getAddress());
-                DefaultMutableTreeNode nodeLink = new DefaultMutableTreeNode(object.getLink());
-
-                nodeName.add(nodeAddress);
-                nodeName.add(nodeLink);
-
-                treeNode.add(nodeName);
-
+                contactsTable.addRow(new Object[]{object.getName(), object.getAddress().trim()});
             }
 
-            tree.setModel(new DefaultTreeModel(treeNode));
-            tree.setAutoscrolls(true);
-            tree.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    if (SwingUtilities.isRightMouseButton(e)) {
-                        JPopupMenu menu = new JPopupMenu();
-                        menu.add(new JMenuItem("Test"));
-                        menu.show(tree, e.getX(), e.getY());
-                    }
-                }
-            });
+            table.setModel(contactsTable);
 
-            contactsListing.setViewportView(tree);
+            contactsListing.setViewportView(table);
         }
 
     }

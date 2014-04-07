@@ -1,5 +1,6 @@
 package com.elvisoliveira.yellowpages.webservice;
 
+import com.elvisoliveira.yellowpages.beans.geocodebean;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -8,7 +9,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -17,8 +17,9 @@ import org.json.simple.parser.ParseException;
 
 public class geocode {
 
-    ArrayList<Map> address_components_array;
     ArrayList<Map> address_components;
+    ArrayList<ArrayList> address;
+    geocodebean addressinfo;
 
     public void geocode(String location) throws UnsupportedEncodingException, Exception {
         // sanitize the location params
@@ -32,22 +33,25 @@ public class geocode {
     }
 
     private void parseJson(String json) throws ParseException {
+        // load the javaBean
+        addressinfo = new geocodebean();
         // ready the parser object
         JSONParser parser = new JSONParser();
         // supply the json to be parsed
         JSONObject jsonObject = (JSONObject) parser.parse(json);
         // status
-        String status = (String) jsonObject.get("status");
-        // results
+        addressinfo.setStatus((String) jsonObject.get("status"));
+        
+        // results: address_components
+        address_components = new ArrayList<>();
+        
         for (Object results : (JSONArray) jsonObject.get("results")) {
-
+            
             JSONObject address_components_iterator = (JSONObject) results;
 
-            address_components = new ArrayList<>();
+            address = new ArrayList<>();
 
             for (Object address_components_index : (JSONArray) address_components_iterator.get("address_components")) {
-
-                address_components_array = new ArrayList<>();
 
                 JSONObject address_components_object = (JSONObject) address_components_index;
 
@@ -59,12 +63,12 @@ public class geocode {
                 map.put("short_name", (String) address_components_object.get("short_name"));
                 map.put("types", (String) typesArray.get(0));
 
-                address_components_array.add(map);
-
+                address_components.add(map);
             }
-
-            address_components.add((Map) address_components_array);
+            
+            address.add(address_components);            
         }
+        addressinfo.setResults_address_components(address);
 
         // address_componentss
         // long_name

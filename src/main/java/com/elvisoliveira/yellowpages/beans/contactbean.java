@@ -10,7 +10,7 @@ public class contactbean {
      * @return the Name
      */
     public String getName() {
-        return Name;
+        return Name.replace(String.valueOf((char) 160), " ").trim();
     }
 
     /**
@@ -24,7 +24,7 @@ public class contactbean {
      * @return the Address
      */
     public String getAddress() {
-        return Address;
+        return Address.replace(String.valueOf((char) 160), " ").trim();
     }
 
     /**
@@ -38,7 +38,7 @@ public class contactbean {
      * @return the Link
      */
     public String getLink() {
-        return Link;
+        return Link.replace(String.valueOf((char) 160), " ").trim();
     }
 
     /**

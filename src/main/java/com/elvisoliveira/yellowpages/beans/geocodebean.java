@@ -6,13 +6,8 @@
 package com.elvisoliveira.yellowpages.beans;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
@@ -21,7 +16,7 @@ import java.util.Set;
 public class geocodebean {
 
     private String status;
-    private List<List<Map<String, String>>> results_address_components;
+    private ArrayList<ArrayList> results_address_components;
     private String results_formatted_address;
     private String results_geometry;
     private String results_geometry_location;
@@ -54,26 +49,17 @@ public class geocodebean {
     /**
      * @return the results_address_components
      */
-    public List<List<Map<String, String>>> getResults_address_components() {
+    public ArrayList<ArrayList> getResults_address_components() {
         return results_address_components;
     }
 
     /**
      * @param results_address_components the results_address_components to set
      */
-    public void setResults_address_components(List<List<Map<String, String>>> results_address_components) {
-
-//        Map<String, String> map = new HashMap<>();
-//                
-//        map.put("name", "someName");
-//        map.put("company", "someCompany");
-//
-//        ArrayList<String> listOfSomething1 = new ArrayList<String>();
-//
+    public void setResults_address_components(ArrayList<ArrayList> results_address_components) {
         this.results_address_components = results_address_components;
 
     }
-
     /**
      * @return the results_formatted_address
      */
@@ -278,4 +264,5 @@ public class geocodebean {
     public void setResults_types(String results_types) {
         this.results_types = results_types;
     }
+
 }
