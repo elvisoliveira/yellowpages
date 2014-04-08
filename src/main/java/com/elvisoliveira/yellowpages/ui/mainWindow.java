@@ -46,7 +46,7 @@ public class mainWindow {
             // define the path of the image
             "%s/src/main/java/%s/ajax-loader.gif",
             // return the project production directory
-            System.getProperty("user.dir").replace(".", "§").replace(".", "/").replace("§", "."),
+            System.getProperty("user.dir").replace(".", "Â§").replace(".", "/").replace("Â§", "."),
             // return the package as a directory
             new mainWindow().getClass().getPackage().getName().replace(".", "/")
     );
@@ -82,11 +82,11 @@ public class mainWindow {
         contactsListing.setPreferredSize(new Dimension(400, 300));
         // position the scroll panel in MigLayout
         panel.add(contactsListing, "wrap");
-        
+
         // panel of the contact
         panelContact.setLayout(new MigLayout());
         panelContact.setPreferredSize(new Dimension(400, 100));
-        
+
         panel.add(panelContact, "growx");
 
         // window configuration
@@ -130,7 +130,7 @@ public class mainWindow {
             List<contactbean> contactsList = telelistas.telelistas(document);
 
             table = new JTable();
-            
+
             contactsArray = new ArrayList<>();
             contactsTable = new DefaultTableModel() {
                 @Override
@@ -138,19 +138,19 @@ public class mainWindow {
                     return false;
                 }
             };
-            contactsTable.addColumn("Nome");
-            contactsTable.addColumn("Endereço");
+            contactsTable.addColumn("Name");
+            contactsTable.addColumn("Address");
 
             for (contactbean object : contactsList) {
-                
+
                 Map<String, String> map = new HashMap<>();
 
                 map.put("name", object.getName());
                 map.put("address", object.getAddress());
                 map.put("link", object.getLink());
-                
+
                 contactsArray.add(map);
-                
+
                 contactsTable.addRow(new Object[]{object.getName(), object.getAddress().trim()});
             }
 
@@ -177,16 +177,27 @@ public class mainWindow {
                 public void mouseExited(MouseEvent e) {
                 }
             });
-            
+
             table.setModel(contactsTable);
 
             contactsListing.setViewportView(table);
         }
 
     }
-    
+
     public static void selectContact(Map info) {
-        panelContact.add(new JLabel("loading... ", new ImageIcon(ajaxLoader), JLabel.CENTER), "wrap");
+        
+        
+        
+        panelContact.removeAll();
+        panelContact.setMaximumSize(new Dimension(400, 100));
+        
+        panelContact.add(new JLabel((String) info.get("name")), "wrap");
+        panelContact.add(new JLabel((String) info.get("address")), "wrap");
+        panelContact.add(new JLabel((String) info.get("link")), "wrap");
+
+        panel.validate();
+
     }
 
 }
