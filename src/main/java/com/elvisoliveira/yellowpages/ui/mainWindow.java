@@ -46,7 +46,7 @@ public class mainWindow {
             // define the path of the image
             "%s/src/main/java/%s/ajax-loader.gif",
             // return the project production directory
-            System.getProperty("user.dir").replace(".", "Â§").replace(".", "/").replace("Â§", "."),
+            System.getProperty("user.dir").replace(".", "---").replace(".", "/").replace("---", "."),
             // return the package as a directory
             new mainWindow().getClass().getPackage().getName().replace(".", "/")
     );
@@ -79,14 +79,13 @@ public class mainWindow {
         // the name is not set, give the user instructions to search
         contactsListing.setViewportView(new JLabel("Search a contact", JLabel.CENTER));
         // set the widget dimentions, required to define layout properties
-        contactsListing.setPreferredSize(new Dimension(400, 300));
+        contactsListing.setPreferredSize(new Dimension(400, 400));
         // position the scroll panel in MigLayout
         panel.add(contactsListing, "wrap");
 
         // panel of the contact
-        panelContact.setLayout(new MigLayout());
-        panelContact.setPreferredSize(new Dimension(400, 100));
-
+        panelContact.setLayout(new MigLayout("insets 0"));
+        panelContact.setVisible(false);
         panel.add(panelContact, "growx");
 
         // window configuration
@@ -107,6 +106,11 @@ public class mainWindow {
         SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
             @Override // required implementation
             public Void doInBackground() throws IOException {
+                // if isser, remove the detailed pannel
+                panelContact.removeAll();
+                panelContact.setLayout(new MigLayout("insets 0"));
+                panelContact.setVisible(false);
+                panel.validate();
                 // this will be executed in background
                 changeContacts(name);
                 // return anything
@@ -186,12 +190,12 @@ public class mainWindow {
     }
 
     public static void selectContact(Map info) {
-        
-        
-        
+
         panelContact.removeAll();
+        panelContact.setLayout(new MigLayout());
         panelContact.setMaximumSize(new Dimension(400, 100));
-        
+        panelContact.setVisible(true);
+
         panelContact.add(new JLabel((String) info.get("name")), "wrap");
         panelContact.add(new JLabel((String) info.get("address")), "wrap");
         panelContact.add(new JLabel((String) info.get("link")), "wrap");
