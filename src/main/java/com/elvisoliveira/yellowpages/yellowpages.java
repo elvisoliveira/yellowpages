@@ -1,7 +1,6 @@
 package com.elvisoliveira.yellowpages;
 
 import com.elvisoliveira.yellowpages.ui.mainWindow;
-import com.elvisoliveira.yellowpages.webservice.geocode;
 import java.io.IOException;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
