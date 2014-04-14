@@ -2,17 +2,21 @@ package com.elvisoliveira.yellowpages.ui;
 
 import com.elvisoliveira.yellowpages.beans.contactbean;
 import com.elvisoliveira.yellowpages.webservice.telelistas;
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,6 +29,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
 
 public class mainWindow {
@@ -34,22 +39,11 @@ public class mainWindow {
     private static DefaultTableModel contactsTable;
     private static JTextField searchInput;
     private static JButton searchButton;
-    private static List<String> strings;
     private static ArrayList<Map> contactsArray;
 
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
     private static final JPanel panelContact = new JPanel();
-
-    // format the loading image with it's full path
-    static final String ajaxLoader = String.format(
-            // define the path of the image
-            "%s/src/main/java/%s/ajax-loader.gif",
-            // return the project production directory
-            System.getProperty("user.dir").replace(".", "---").replace(".", "/").replace("---", "."),
-            // return the package as a directory
-            new mainWindow().getClass().getPackage().getName().replace(".", "/")
-    );
 
     public static void setContacts(String name) throws IOException {
 
@@ -98,27 +92,40 @@ public class mainWindow {
     }
 
     public static void searchButton() {
-        // set the loading screen, while the SwingWorker class is working
-        contactsListing.setViewportView(new JLabel("loading... ", new ImageIcon(ajaxLoader), JLabel.CENTER));
-        // get the inputted name
-        final String name = searchInput.getText();
-        // set the SwingWorker class as a buffer streammer
-        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
-            @Override // required implementation
-            public Void doInBackground() throws IOException {
-                // if isser, remove the detailed pannel
-                panelContact.removeAll();
-                panelContact.setLayout(new MigLayout("insets 0"));
-                panelContact.setVisible(false);
-                panel.validate();
-                // this will be executed in background
-                changeContacts(name);
-                // return anything
-                return null;
-            }
-        };
-        // make the swingWorker work
-        swingWorker.execute();
+
+        try {
+
+            // get the loading image
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream in = classLoader.getResourceAsStream("ajax-loader.gif");
+            Image ajaxLoaders = Toolkit.getDefaultToolkit().createImage(IOUtils.toByteArray(in));
+
+            // BufferedImage ajaxLoaders = ImageIO.read(stream);
+
+            // set the loading screen, while the SwingWorker class is working
+            contactsListing.setViewportView(new JLabel("loading... ", new ImageIcon(ajaxLoaders), JLabel.CENTER));
+            // get the inputted name
+            final String name = searchInput.getText();
+            // set the SwingWorker class as a buffer streammer
+            SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+                @Override // required implementation
+                public Void doInBackground() throws IOException {
+                    // if isser, remove the detailed pannel
+                    panelContact.removeAll();
+                    panelContact.setLayout(new MigLayout("insets 0"));
+                    panelContact.setVisible(false);
+                    panel.validate();
+                    // this will be executed in background
+                    changeContacts(name);
+                    // return anything
+                    return null;
+                }
+            };
+            // make the swingWorker work
+            swingWorker.execute();
+        } catch (IOException ex) {
+            Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public static void changeContacts(String name) throws IOException {
@@ -191,15 +198,20 @@ public class mainWindow {
 
     public static void selectContact(Map info) {
 
+        // view detailed information
+        searchButton = new JButton();
+        searchButton.setText("Details");
+        
         panelContact.removeAll();
-        panelContact.setLayout(new MigLayout());
+        panelContact.setLayout(new MigLayout("insets 0, gap 0"));
         panelContact.setMaximumSize(new Dimension(400, 100));
         panelContact.setVisible(true);
 
         panelContact.add(new JLabel((String) info.get("name")), "wrap");
         panelContact.add(new JLabel((String) info.get("address")), "wrap");
         panelContact.add(new JLabel((String) info.get("link")), "wrap");
-
+        panelContact.add(searchButton, "wrap");
+        
         panel.validate();
 
     }
