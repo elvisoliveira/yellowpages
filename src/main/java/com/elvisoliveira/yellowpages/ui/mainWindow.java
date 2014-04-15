@@ -2,6 +2,7 @@ package com.elvisoliveira.yellowpages.ui;
 
 import com.elvisoliveira.yellowpages.beans.contactbean;
 import com.elvisoliveira.yellowpages.webservice.telelistas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -17,12 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -31,6 +34,8 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
+import org.netbeans.lib.awtextra.AbsoluteConstraints;
+import org.netbeans.lib.awtextra.AbsoluteLayout;
 
 public class mainWindow {
 
@@ -197,20 +202,22 @@ public class mainWindow {
     }
 
     public static void selectContact(Map info) {
-
+        
         // view detailed information
         searchButton = new JButton();
         searchButton.setText("Details");
         
         panelContact.removeAll();
-        panelContact.setLayout(new MigLayout("insets 0, gap 0"));
-        panelContact.setMaximumSize(new Dimension(400, 100));
+        panelContact.setLayout(new AbsoluteLayout());
+        panelContact.setMinimumSize(new Dimension(400, 115));
+        panelContact.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         panelContact.setVisible(true);
 
-        panelContact.add(new JLabel((String) info.get("name")), "wrap");
-        panelContact.add(new JLabel((String) info.get("address")), "wrap");
-        panelContact.add(new JLabel((String) info.get("link")), "wrap");
-        panelContact.add(searchButton, "wrap");
+        panelContact.add(new JLabel((String) info.get("name")), new AbsoluteConstraints(10, 5, 380, 20));
+        panelContact.add(new JLabel((String) info.get("address")), new AbsoluteConstraints(10, 25, 380, 20));
+        panelContact.add(new JLabel((String) info.get("link")), new AbsoluteConstraints(10, 45, 380, 20));
+        panelContact.add(new JSeparator(), new AbsoluteConstraints(10, 70, 380, -1));
+        panelContact.add(searchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
         
         panel.validate();
 
