@@ -1,6 +1,6 @@
 package com.elvisoliveira.yellowpages.beans;
 
-public class contactbean {
+public class ContactBean {
 
     private String Name;
     private String Address;

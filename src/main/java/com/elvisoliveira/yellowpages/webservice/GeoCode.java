@@ -1,6 +1,6 @@
 package com.elvisoliveira.yellowpages.webservice;
 
-import com.elvisoliveira.yellowpages.beans.geocodebean;
+import com.elvisoliveira.yellowpages.beans.GeocodeBean;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -15,11 +15,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class geocode {
+public class GeoCode {
 
     ArrayList<Map> address_components;
     ArrayList<ArrayList> address;
-    geocodebean addressinfo;
+    GeocodeBean addressinfo;
 
     public void geocode(String location) throws UnsupportedEncodingException, Exception {
         // sanitize the location params
@@ -34,7 +34,7 @@ public class geocode {
 
     private void parseJson(String json) throws ParseException {
         // load the javaBean
-        addressinfo = new geocodebean();
+        addressinfo = new GeocodeBean();
         // ready the parser object
         JSONParser parser = new JSONParser();
         // supply the json to be parsed

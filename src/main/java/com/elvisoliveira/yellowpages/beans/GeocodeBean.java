@@ -6,14 +6,12 @@
 package com.elvisoliveira.yellowpages.beans;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author root
  */
-public class geocodebean {
+public class GeocodeBean {
 
     private String status;
     private ArrayList<ArrayList> results_address_components;

@@ -1,7 +1,7 @@
 package com.elvisoliveira.yellowpages.ui;
 
-import com.elvisoliveira.yellowpages.beans.contactbean;
-import com.elvisoliveira.yellowpages.webservice.telelistas;
+import com.elvisoliveira.yellowpages.beans.ContactBean;
+import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
@@ -37,15 +37,18 @@ import org.jsoup.nodes.Document;
 import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
-public class mainWindow {
+public class MainWindow {
 
     private static JScrollPane contactsListing;
     private static JTable table;
     private static DefaultTableModel contactsTable;
     private static JTextField searchInput;
     private static JButton searchButton;
+    private static JButton viewButton;
+    private static JButton detailsButton;
     private static ArrayList<Map> contactsArray;
-
+    
+    private static final ArrayList<String> arguments = new ArrayList();
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
     private static final JPanel panelContact = new JPanel();
@@ -83,7 +86,7 @@ public class mainWindow {
         panel.add(contactsListing, "wrap");
 
         // panel of the contact
-        panelContact.setLayout(new MigLayout("insets 0"));
+        panelContact.setLayout(new AbsoluteLayout());
         panelContact.setVisible(false);
         panel.add(panelContact, "growx");
 
@@ -106,7 +109,6 @@ public class mainWindow {
             Image ajaxLoaders = Toolkit.getDefaultToolkit().createImage(IOUtils.toByteArray(in));
 
             // BufferedImage ajaxLoaders = ImageIO.read(stream);
-
             // set the loading screen, while the SwingWorker class is working
             contactsListing.setViewportView(new JLabel("loading... ", new ImageIcon(ajaxLoaders), JLabel.CENTER));
             // get the inputted name
@@ -117,7 +119,7 @@ public class mainWindow {
                 public Void doInBackground() throws IOException {
                     // if isser, remove the detailed pannel
                     panelContact.removeAll();
-                    panelContact.setLayout(new MigLayout("insets 0"));
+                    panelContact.setMinimumSize(new Dimension(0, 0));
                     panelContact.setVisible(false);
                     panel.validate();
                     // this will be executed in background
@@ -129,21 +131,21 @@ public class mainWindow {
             // make the swingWorker work
             swingWorker.execute();
         } catch (IOException ex) {
-            Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void changeContacts(String name) throws IOException {
         // make the request and return the Document
-        Document document = telelistas.generateDocument(name);
+        Document document = Telelistas.generateDocument(name);
         // from the requested Document, verify how many contacts were returned
-        Integer total = telelistas.totalContacts(document);
+        Integer total = Telelistas.totalContacts(document);
         // if the total of returned contacts are zero, feedback one messange
         if (total.equals(0)) {
             contactsListing.setViewportView(new JLabel("None contacts with this name", JLabel.CENTER));
         } // if the total of returned contacts are greater than zero, return them
         else {
-            List<contactbean> contactsList = telelistas.telelistas(document);
+            List<ContactBean> contactsList = Telelistas.telelistas(document);
 
             table = new JTable();
 
@@ -157,7 +159,7 @@ public class mainWindow {
             contactsTable.addColumn("Name");
             contactsTable.addColumn("Address");
 
-            for (contactbean object : contactsList) {
+            for (ContactBean object : contactsList) {
 
                 Map<String, String> map = new HashMap<>();
 
@@ -201,12 +203,21 @@ public class mainWindow {
 
     }
 
-    public static void selectContact(Map info) {
+    public static void selectContact(final Map info) {
+
+        arguments.clear();
+        arguments.add((String) info.get("link"));
         
-        // view detailed information
-        searchButton = new JButton();
-        searchButton.setText("Details");
+        // view detailed information on browser
+        viewButton = new JButton();
+        viewButton.setText("View on Browser");
+        viewButton.addActionListener(new MainWindowActionListener("viewOnBrowser", arguments));
         
+        // view detailed information on app
+        detailsButton = new JButton();
+        detailsButton.setText("Details");
+        detailsButton.addActionListener(new MainWindowActionListener("viewOnApp", arguments));
+
         panelContact.removeAll();
         panelContact.setLayout(new AbsoluteLayout());
         panelContact.setMinimumSize(new Dimension(400, 115));
@@ -217,8 +228,9 @@ public class mainWindow {
         panelContact.add(new JLabel((String) info.get("address")), new AbsoluteConstraints(10, 25, 380, 20));
         panelContact.add(new JLabel((String) info.get("link")), new AbsoluteConstraints(10, 45, 380, 20));
         panelContact.add(new JSeparator(), new AbsoluteConstraints(10, 70, 380, -1));
-        panelContact.add(searchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
-        
+        panelContact.add(viewButton, new AbsoluteConstraints(10, 80, -1, -1));
+        panelContact.add(detailsButton, new AbsoluteConstraints(130, 80, -1, -1));
+
         panel.validate();
 
     }

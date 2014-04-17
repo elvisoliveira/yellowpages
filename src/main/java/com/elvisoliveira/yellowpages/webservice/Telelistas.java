@@ -1,17 +1,20 @@
 package com.elvisoliveira.yellowpages.webservice;
 
-import com.elvisoliveira.yellowpages.beans.contactbean;
+import com.elvisoliveira.yellowpages.beans.ContactBean;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class telelistas {
+public class Telelistas {
+
+    private static String[] tokens;
 
     public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException {
 
@@ -32,9 +35,24 @@ public class telelistas {
 
     }
 
-    public static List<contactbean> telelistas(Document doc) {
+    public static ArrayList<HashMap> getUserInfo(String url) {
+        // gte the tokens retuned of string
+        tokens = url.split("/");
+        // loop the tokens
+        for (String string : tokens) {
+            // find ont token that has only numbers
+            if (string.matches("[-+]?\\d*\\.?\\d+")) {
+                // define as contact ID (of telelistas)
+                System.out.println(string);
+            }
 
-        List<contactbean> contactsList = new ArrayList();
+        }
+        return null;
+    }
+
+    public static List<ContactBean> telelistas(Document doc) {
+
+        List<ContactBean> contactsList = new ArrayList();
 
         Elements contacts = doc.select("div#Content_Regs > table");
 
@@ -43,9 +61,9 @@ public class telelistas {
             String contactName = contact.select("td.text_resultado_ib > a").text();
             String contactAddress = contact.select("td.text_endereco_ib").text();
             String contactLink = contact.select("td.text_resultado_ib a").attr("href");
-            
+
             // 
-            contactbean foreigner = new contactbean();
+            ContactBean foreigner = new ContactBean();
 
             // 
             foreigner.setAddress(contactAddress);
@@ -53,8 +71,6 @@ public class telelistas {
             foreigner.setName(contactName);
 
             // set google information
-            
-            
             contactsList.add(foreigner);
 
         }

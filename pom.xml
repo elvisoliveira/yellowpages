@@ -51,7 +51,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.elvisoliveira.yellowpages.yellowpages</mainClass>
+                                    <mainClass>com.elvisoliveira.yellowpages.YellowPages</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
