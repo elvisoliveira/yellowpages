@@ -44,8 +44,7 @@ public class MainWindowActionListener implements ActionListener {
                 break;
             // if the clicked action was on the "Details" buttom
             case "viewOnApp":
-                
-                 
+
                 userInfo = Telelistas.getUserInfo((String) arguments.get(0));
 
                 // layout configuration        

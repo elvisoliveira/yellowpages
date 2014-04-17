@@ -195,7 +195,6 @@ public class MainWindow {
                 public void mouseExited(MouseEvent e) {
                 }
             });
-
             table.setModel(contactsTable);
 
             contactsListing.setViewportView(table);
