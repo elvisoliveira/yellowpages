@@ -7,6 +7,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -35,19 +37,43 @@ public class Telelistas {
 
     }
 
-    public static ArrayList<HashMap> getUserInfo(String url) {
-        // gte the tokens retuned of string
+    public static Integer getUserID(String url) {
+        // get the tokens retuned of string
         tokens = url.split("/");
-        // loop the tokens
+
         for (String string : tokens) {
             // find ont token that has only numbers
             if (string.matches("[-+]?\\d*\\.?\\d+")) {
                 // define as contact ID (of telelistas)
-                System.out.println(string);
+                return Integer.parseInt(string);
             }
-
         }
         return null;
+    }
+
+    public static HashMap<String, String> getContactInfo(Integer id) {
+
+        String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
+
+        try {
+            Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
+
+            String name = doc.select("td.nome_anun").text();
+            String address = doc.select("p.infoplus_text1").text();
+            String telephone = doc.select("p.infoplus_text2").text();
+
+            System.out.println(name);
+            System.out.println(address);
+            System.out.println(telephone);
+            
+            
+        }
+        catch (IOException ex) {
+            Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+
     }
 
     public static List<ContactBean> telelistas(Document doc) {

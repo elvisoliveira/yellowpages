@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,11 +21,11 @@ import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -35,7 +34,6 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
-import org.netbeans.lib.awtextra.AbsoluteConstraints;
 import org.netbeans.lib.awtextra.AbsoluteLayout;
 
 public class MainWindow {
@@ -53,6 +51,7 @@ public class MainWindow {
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
     private static final JPanel panelContact = new JPanel();
+    private static final JDialog contactinfo = new JDialog();
 
     public static void setContacts(String name) throws IOException {
 
@@ -88,6 +87,11 @@ public class MainWindow {
         panel.add(contactsListing, "wrap");
         panel.add(panelContact, "growx");
 
+        // dialog of the detailed information about the selected contact
+        contactinfo.setLayout(new MigLayout(""));
+        
+        
+        
         // window configuration
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -214,13 +218,13 @@ public class MainWindow {
         detailsButton.setText("Details");
         detailsButton.addActionListener(new MainWindowActionListener("viewOnApp", arguments));
 
-        panelInfo = new JPanel(new MigLayout("", "[62px][172px]", "[15px][15px][15px]"));
+        panelInfo = new JPanel(new MigLayout("", "[62px][]", "[15px][15px][15px]"));
         panelInfo.add(new JLabel("Nome"), "cell 0 0,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("name")), "cell 1 0,growx,aligny top");
         panelInfo.add(new JLabel("Address"), "cell 0 1,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("address")), "cell 1 1,growx,aligny top");
         panelInfo.add(new JLabel("Link"), "cell 0 2,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("link")), "cell 1 2,growx,aligny top");
+        panelInfo.add(new JLabel((String) info.get("name")), "cell 1 0,growx,aligny top, wmin 0");
+        panelInfo.add(new JLabel((String) info.get("address")), "cell 1 1,growx,aligny top, wmin 0");
+        panelInfo.add(new JLabel((String) info.get("link")), "cell 1 2,growx,aligny top, wmin 0");
 
         panelActions = new JPanel(new MigLayout("inset 0", "[][]", "[]"));
         panelActions.add(viewButton, "cell 0 0");
