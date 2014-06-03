@@ -20,7 +20,7 @@ public class MainWindowActionListener implements ActionListener {
 
     private final String action;
     private final ArrayList<String> arguments;
-
+    
     private static ArrayList<HashMap> userInfo;
     private static final JPanel contactPanel = new JPanel();
     private static final JFrame contactWindow = new JFrame();
@@ -38,8 +38,7 @@ public class MainWindowActionListener implements ActionListener {
             case "viewOnBrowser":
                 try {
                     Desktop.getDesktop().browse(new URI((String) arguments.get(0)));
-                }
-                catch (URISyntaxException | IOException ex) {
+                } catch (URISyntaxException | IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
@@ -49,9 +48,9 @@ public class MainWindowActionListener implements ActionListener {
                 userInfo = Telelistas.getUserInfo((String) arguments.get(0));
 
                 // layout configuration        
-                contactPanel.setLayout(new MigLayout("debug"));
+                contactPanel.setLayout(new MigLayout());
                 contactPanel.add(new JLabel("Search a contact", JLabel.CENTER), "wrap");
-
+                
                 // window configuration
                 contactWindow.add(contactPanel);
                 contactWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

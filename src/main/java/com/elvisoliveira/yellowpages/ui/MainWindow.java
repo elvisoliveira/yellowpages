@@ -8,7 +8,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class MainWindow {
     private static JButton viewButton;
     private static JButton detailsButton;
     private static ArrayList<Map> contactsArray;
-
+    
     private static final ArrayList<String> arguments = new ArrayList();
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
@@ -56,8 +55,13 @@ public class MainWindow {
 
     public static void setContacts(String name) throws IOException {
 
+        // layout configuration        
+        panel.setLayout(new MigLayout());
+
         // serach field
         searchInput = new JTextField();
+        // position the serach field in MigLayout
+        panel.add(searchInput, "growx, growy, split 2");
 
         // search button
         searchButton = new JButton();
@@ -68,24 +72,22 @@ public class MainWindow {
                 searchButton();
             }
         });
+        // position the searchButton in MigLayout
+        panel.add(searchButton, "wrap");
 
-        // in the beginning of the execution
-        // the name is not set, give the user instructions to search
-        // set the widget dimentions, required to define layout properties
         // instantiate the widget that will list the contacts
         contactsListing = new JScrollPane();
+        // in the beginning of the execution
+        // the name is not set, give the user instructions to search
         contactsListing.setViewportView(new JLabel("Search a contact", JLabel.CENTER));
+        // set the widget dimentions, required to define layout properties
         contactsListing.setPreferredSize(new Dimension(400, 400));
+        // position the scroll panel in MigLayout
+        panel.add(contactsListing, "wrap");
 
         // panel of the contact
         panelContact.setLayout(new AbsoluteLayout());
         panelContact.setVisible(false);
-
-        // layout configuration        
-        panel.setLayout(new MigLayout(""));
-        panel.add(searchInput, "growx, growy, split 2");
-        panel.add(searchButton, "wrap");
-        panel.add(contactsListing, "wrap");
         panel.add(panelContact, "growx");
 
         // window configuration
@@ -100,6 +102,7 @@ public class MainWindow {
     public static void searchButton() {
 
         try {
+
             // get the loading image
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             InputStream in = classLoader.getResourceAsStream("ajax-loader.gif");
@@ -108,53 +111,45 @@ public class MainWindow {
             // BufferedImage ajaxLoaders = ImageIO.read(stream);
             // set the loading screen, while the SwingWorker class is working
             contactsListing.setViewportView(new JLabel("loading... ", new ImageIcon(ajaxLoaders), JLabel.CENTER));
-
             // get the inputted name
             final String name = searchInput.getText();
-
             // set the SwingWorker class as a buffer streammer
             SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
-                @Override
+                @Override // required implementation
                 public Void doInBackground() throws IOException {
-
-                    // if isset, remove the detailed pannel
+                    // if isser, remove the detailed pannel
                     panelContact.removeAll();
                     panelContact.setMinimumSize(new Dimension(0, 0));
                     panelContact.setVisible(false);
-
                     panel.validate();
-
                     // this will be executed in background
                     changeContacts(name);
-
                     // return anything
                     return null;
                 }
             };
-
             // make the swingWorker work
             swingWorker.execute();
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public static void changeContacts(String name) throws IOException {
-
         // make the request and return the Document
         Document document = Telelistas.generateDocument(name);
-
         // from the requested Document, verify how many contacts were returned
         Integer total = Telelistas.totalContacts(document);
-
         // if the total of returned contacts are zero, feedback one messange
         if (total.equals(0)) {
-            contactsListing.setViewportView(new JLabel("no contacts with this name", JLabel.CENTER));
-        }
-        // if the total of returned contacts are greater than zero, return them
+            contactsListing.setViewportView(new JLabel("None contacts with this name", JLabel.CENTER));
+        } // if the total of returned contacts are greater than zero, return them
         else {
+            List<ContactBean> contactsList = Telelistas.telelistas(document);
 
+            table = new JTable();
+
+            contactsArray = new ArrayList<>();
             contactsTable = new DefaultTableModel() {
                 @Override
                 public boolean isCellEditable(int row, int column) {
@@ -163,10 +158,6 @@ public class MainWindow {
             };
             contactsTable.addColumn("Name");
             contactsTable.addColumn("Address");
-
-            List<ContactBean> contactsList = Telelistas.telelistas(document);
-
-            contactsArray = new ArrayList<>();
 
             for (ContactBean object : contactsList) {
 
@@ -181,15 +172,30 @@ public class MainWindow {
                 contactsTable.addRow(new Object[]{object.getName(), object.getAddress().trim()});
             }
 
-            table = new JTable();
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-            table.setModel(contactsTable);
-            table.addMouseListener(new MouseAdapter() {
+            table.addMouseListener(new MouseListener() {
                 @Override
-                public void mousePressed(MouseEvent me) {
+                public void mouseClicked(MouseEvent e) {
                     selectContact(contactsArray.get(table.getSelectedRow()));
                 }
+
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                }
             });
+            table.setModel(contactsTable);
 
             contactsListing.setViewportView(table);
         }
@@ -197,42 +203,32 @@ public class MainWindow {
     }
 
     public static void selectContact(final Map info) {
-        
-        JPanel panelInfo;
-        JPanel panelActions;
 
         arguments.clear();
         arguments.add((String) info.get("link"));
-
+        
         // view detailed information on browser
         viewButton = new JButton();
         viewButton.setText("View on Browser");
         viewButton.addActionListener(new MainWindowActionListener("viewOnBrowser", arguments));
-
+        
         // view detailed information on app
         detailsButton = new JButton();
         detailsButton.setText("Details");
         detailsButton.addActionListener(new MainWindowActionListener("viewOnApp", arguments));
 
-        panelInfo = new JPanel(new MigLayout("", "[62px][172px]", "[15px][15px][15px]"));
-        panelInfo.add(new JLabel("Nome"), "cell 0 0,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("name")), "cell 1 0,growx,aligny top");
-        panelInfo.add(new JLabel("Address"), "cell 0 1,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("address")), "cell 1 1,growx,aligny top");
-        panelInfo.add(new JLabel("Link"), "cell 0 2,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("link")), "cell 1 2,growx,aligny top");
-
-        panelActions = new JPanel(new MigLayout("inset 0", "[][]", "[]"));
-        panelActions.add(viewButton, "cell 0 0");
-        panelActions.add(detailsButton, "cell 1 0");
-
         panelContact.removeAll();
-        panelContact.setLayout(new MigLayout("", "[]", "[][]"));
-        panelContact.setMinimumSize(new Dimension(400, 130));
+        panelContact.setLayout(new AbsoluteLayout());
+        panelContact.setMinimumSize(new Dimension(400, 115));
         panelContact.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
         panelContact.setVisible(true);
-        panelContact.add(panelInfo, "cell 0 0,grow");
-        panelContact.add(panelActions, "cell 0 1,grow");
+
+        panelContact.add(new JLabel((String) info.get("name")), new AbsoluteConstraints(10, 5, 380, 20));
+        panelContact.add(new JLabel((String) info.get("address")), new AbsoluteConstraints(10, 25, 380, 20));
+        panelContact.add(new JLabel((String) info.get("link")), new AbsoluteConstraints(10, 45, 380, 20));
+        panelContact.add(new JSeparator(), new AbsoluteConstraints(10, 70, 380, -1));
+        panelContact.add(viewButton, new AbsoluteConstraints(10, 80, -1, -1));
+        panelContact.add(detailsButton, new AbsoluteConstraints(130, 80, -1, -1));
 
         panel.validate();
 

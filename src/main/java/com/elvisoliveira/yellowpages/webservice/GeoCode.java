@@ -41,12 +41,12 @@ public class GeoCode {
         JSONObject jsonObject = (JSONObject) parser.parse(json);
         // status
         addressinfo.setStatus((String) jsonObject.get("status"));
-
+        
         // results: address_components
         address_components = new ArrayList<>();
-
+        
         for (Object results : (JSONArray) jsonObject.get("results")) {
-
+            
             JSONObject address_components_iterator = (JSONObject) results;
 
             address = new ArrayList<>();
@@ -65,8 +65,8 @@ public class GeoCode {
 
                 address_components.add(map);
             }
-
-            address.add(address_components);
+            
+            address.add(address_components);            
         }
         addressinfo.setResults_address_components(address);
 
