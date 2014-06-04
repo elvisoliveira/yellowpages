@@ -26,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -34,7 +35,6 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
-import org.netbeans.lib.awtextra.AbsoluteLayout;
 
 public class MainWindow {
 
@@ -51,7 +51,17 @@ public class MainWindow {
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
     private static final JPanel panelContact = new JPanel();
-    private static final JDialog contactinfo = new JDialog();
+
+    // contact information panel    
+    private static final JDialog contactinfo = new JDialog(window, "", true);
+    
+    private static final JPanel panelMaps = new JPanel();
+    private static final JTabbedPane tabbedMaps = new JTabbedPane(JTabbedPane.TOP);
+
+    private static final JPanel google = new JPanel();
+    private static final JPanel bing = new JPanel();
+    private static final JPanel yahoo = new JPanel();
+    private static final JPanel nokia = new JPanel();
 
     public static void setContacts(String name) throws IOException {
 
@@ -76,10 +86,6 @@ public class MainWindow {
         contactsListing.setViewportView(new JLabel("Search a contact", JLabel.CENTER));
         contactsListing.setPreferredSize(new Dimension(400, 400));
 
-        // panel of the contact
-        panelContact.setLayout(new AbsoluteLayout());
-        panelContact.setVisible(false);
-
         // layout configuration        
         panel.setLayout(new MigLayout(""));
         panel.add(searchInput, "growx, growy, split 2");
@@ -88,10 +94,10 @@ public class MainWindow {
         panel.add(panelContact, "growx");
 
         // dialog of the detailed information about the selected contact
-        contactinfo.setLayout(new MigLayout(""));
-        
-        
-        
+        contactinfo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        contactinfo.setSize(new Dimension(500, 500));
+        contactinfo.setVisible(false);
+
         // window configuration
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -239,6 +245,29 @@ public class MainWindow {
         panelContact.add(panelActions, "cell 0 1,grow");
 
         panel.validate();
+
+    }
+
+    public static void setContactInfo() {
+
+        tabbedMaps.addTab("Google Maps", null, google, null);
+        tabbedMaps.addTab("Bing Maps", null, bing, null);
+        tabbedMaps.addTab("Yahoo! Maps", null, yahoo, null);
+        tabbedMaps.addTab("Nokia Maps", null, nokia, null);
+
+        panelMaps.setLayout(new MigLayout("inset 0", "[grow]", "[grow]"));
+        panelMaps.add(tabbedMaps, "cell 0 0,grow");
+
+        contactinfo.setLayout(new MigLayout("", "[62px][grow,fill]", "[15px][15px][15px][grow]"));
+        contactinfo.add(new JLabel("Nome"), "cell 0 0");
+        contactinfo.add(new JLabel(""), "cell 1 0");
+        contactinfo.add(new JLabel("Endereço"), "cell 0 1");
+        contactinfo.add(new JLabel(""), "cell 1 1");
+        contactinfo.add(new JLabel("Telefone"), "cell 0 2");
+        contactinfo.add(new JLabel(""), "cell 1 2");
+        contactinfo.add(panelMaps, "cell 0 3 2 1,grow");
+        contactinfo.setSize(new Dimension(500, 500));
+        contactinfo.setVisible(true);
 
     }
 

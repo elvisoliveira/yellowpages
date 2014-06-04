@@ -28,11 +28,6 @@
             <version>1.4</version>
             <type>jar</type>
         </dependency>
-        <dependency>
-            <groupId>unknown.binary</groupId>
-            <artifactId>AbsoluteLayout</artifactId>
-            <version>SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
