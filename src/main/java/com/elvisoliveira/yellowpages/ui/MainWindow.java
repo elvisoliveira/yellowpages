@@ -54,7 +54,7 @@ public class MainWindow {
 
     // contact information panel    
     private static final JDialog contactinfo = new JDialog(window, "", true);
-    
+
     private static final JPanel panelMaps = new JPanel();
     private static final JTabbedPane tabbedMaps = new JTabbedPane(JTabbedPane.TOP);
 
@@ -97,6 +97,9 @@ public class MainWindow {
         contactinfo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         contactinfo.setSize(new Dimension(500, 500));
         contactinfo.setVisible(false);
+
+        // dialog of contact information (with maps)
+        contactinfo.setLayout(new MigLayout("", "[62px][grow,fill]", "[15px][15px][15px][grow]"));
 
         // window configuration
         window.add(panel);
@@ -248,7 +251,9 @@ public class MainWindow {
 
     }
 
-    public static void setContactInfo() {
+    public static void setContactInfo(ContactBean info) {
+
+        tabbedMaps.removeAll();
 
         tabbedMaps.addTab("Google Maps", null, google, null);
         tabbedMaps.addTab("Bing Maps", null, bing, null);
@@ -258,15 +263,18 @@ public class MainWindow {
         panelMaps.setLayout(new MigLayout("inset 0", "[grow]", "[grow]"));
         panelMaps.add(tabbedMaps, "cell 0 0,grow");
 
-        contactinfo.setLayout(new MigLayout("", "[62px][grow,fill]", "[15px][15px][15px][grow]"));
-        contactinfo.add(new JLabel("Nome"), "cell 0 0");
-        contactinfo.add(new JLabel(""), "cell 1 0");
-        contactinfo.add(new JLabel("Endereço"), "cell 0 1");
-        contactinfo.add(new JLabel(""), "cell 1 1");
-        contactinfo.add(new JLabel("Telefone"), "cell 0 2");
-        contactinfo.add(new JLabel(""), "cell 1 2");
-        contactinfo.add(panelMaps, "cell 0 3 2 1,grow");
-        contactinfo.setSize(new Dimension(500, 500));
+        contactinfo.getContentPane().removeAll();
+
+        contactinfo.getContentPane().add(new JLabel("Nome"), "cell 0 0");
+        contactinfo.getContentPane().add(new JLabel(info.getName()), "cell 1 0");
+        contactinfo.getContentPane().add(new JLabel("Endereço"), "cell 0 1");
+        contactinfo.getContentPane().add(new JLabel(info.getAddress()), "cell 1 1");
+        contactinfo.getContentPane().add(new JLabel("Telefone"), "cell 0 2");
+        contactinfo.getContentPane().add(new JLabel(info.getTelephone()), "cell 1 2");
+        contactinfo.getContentPane().add(panelMaps, "cell 0 3 2 1,grow");
+
+        contactinfo.revalidate();
+        contactinfo.repaint();
         contactinfo.setVisible(true);
 
     }

@@ -51,22 +51,30 @@ public class Telelistas {
         return null;
     }
 
-    public static HashMap<String, String> getContactInfo(Integer id) {
+    public static ContactBean getContactInfo(Integer id) {
 
         String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
 
+        System.out.println(url);
+        
         try {
             Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
-            String name = doc.select("td.nome_anun").text();
             String address = doc.select("p.infoplus_text1").text();
             String telephone = doc.select("p.infoplus_text2").text();
+            
+            doc.select("td.nome_anun span").empty();
+            
+            String name = doc.select("td.nome_anun").text();
 
-            System.out.println(name);
-            System.out.println(address);
-            System.out.println(telephone);
+            ContactBean contact = new ContactBean();
+            contact.setAddress(address);
+            contact.setLink(url);
+            contact.setName(name);
+            contact.setTelephone(telephone);
             
-            
+            return contact;
+
         }
         catch (IOException ex) {
             Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,6 +5,7 @@ public class ContactBean {
     private String Name;
     private String Address;
     private String Link;
+    private String Telephone;
 
     /**
      * @return the Name
@@ -46,6 +47,20 @@ public class ContactBean {
      */
     public void setLink(String Link) {
         this.Link = Link.trim();
+    }
+
+    /**
+     * @return the Telephone
+     */
+    public String getTelephone() {
+        return Telephone;
+    }
+
+    /**
+     * @param Telephone the Telephone to set
+     */
+    public void setTelephone(String Telephone) {
+        this.Telephone = Telephone;
     }
 
 }

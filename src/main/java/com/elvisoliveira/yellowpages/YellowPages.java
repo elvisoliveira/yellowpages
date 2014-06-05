@@ -24,7 +24,6 @@ public class YellowPages {
         // testing the geocode API
         // geocode geocode = new geocode();
         // geocode.geocode("1600 Amphitheatre Parkway, Mountain View, CA");
-        
         // App startup
         MainWindow.setContacts("");
 

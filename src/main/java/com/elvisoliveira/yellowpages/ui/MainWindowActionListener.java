@@ -44,9 +44,7 @@ public class MainWindowActionListener implements ActionListener {
 
                 Integer userInfo = Telelistas.getUserID((String) arguments.get(0));
 
-                MainWindow.setContactInfo();
-
-                Telelistas.getContactInfo(userInfo);
+                MainWindow.setContactInfo(Telelistas.getContactInfo(userInfo));
 
                 break;
         }
