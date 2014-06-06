@@ -17,22 +17,26 @@ import org.json.simple.parser.ParseException;
 
 public class GeoCode {
 
-    ArrayList<Map> address_components;
-    ArrayList<ArrayList> address;
-    GeocodeBean addressinfo;
+    private static ArrayList<Map> address_components;
+    private static ArrayList<ArrayList> address;
+    private static GeocodeBean addressinfo;
 
-    public void geocode(String location) throws UnsupportedEncodingException, Exception {
+    public static GeocodeBean geocode(String location) throws UnsupportedEncodingException, Exception {
         // sanitize the location params
         String geocodeUrl = URLEncoder.encode(location, "ISO-8859-1");
         // set the google geocode API request URL
         String unencodedUrl = "http://maps.googleapis.com/maps/api/geocode/json?address=" + geocodeUrl + "&sensor=true";
         // 
+
         String results = getJson(unencodedUrl);
 
-        parseJson(results);
+        GeocodeBean geocode = parseJson(results);
+
+        return geocode;
+
     }
 
-    private void parseJson(String json) throws ParseException {
+    private static GeocodeBean parseJson(String json) throws ParseException {
         // load the javaBean
         addressinfo = new GeocodeBean();
         // ready the parser object
@@ -41,12 +45,12 @@ public class GeoCode {
         JSONObject jsonObject = (JSONObject) parser.parse(json);
         // status
         addressinfo.setStatus((String) jsonObject.get("status"));
-        
+
         // results: address_components
         address_components = new ArrayList<>();
-        
+
         for (Object results : (JSONArray) jsonObject.get("results")) {
-            
+
             JSONObject address_components_iterator = (JSONObject) results;
 
             address = new ArrayList<>();
@@ -65,10 +69,13 @@ public class GeoCode {
 
                 address_components.add(map);
             }
-            
-            address.add(address_components);            
+
+            address.add(address_components);
         }
+
         addressinfo.setResults_address_components(address);
+
+        return addressinfo;
 
         // address_componentss
         // long_name
@@ -91,7 +98,7 @@ public class GeoCode {
         // types
     }
 
-    private String getJson(String urlParam) throws Exception {
+    private static String getJson(String urlParam) throws Exception {
 
         URL url;
         BufferedReader reader = null;
@@ -120,7 +127,8 @@ public class GeoCode {
                 stringBuilder.append(line).append("\n");
             }
 
-        } finally {
+        }
+        finally {
             // if the reader is set, the connection was made
             if (reader != null) {
                 // close the connection

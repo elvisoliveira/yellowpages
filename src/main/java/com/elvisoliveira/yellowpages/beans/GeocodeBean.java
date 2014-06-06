@@ -58,6 +58,7 @@ public class GeocodeBean {
         this.results_address_components = results_address_components;
 
     }
+
     /**
      * @return the results_formatted_address
      */

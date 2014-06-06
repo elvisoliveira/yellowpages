@@ -1,6 +1,8 @@
 package com.elvisoliveira.yellowpages.ui;
 
 import com.elvisoliveira.yellowpages.beans.ContactBean;
+import com.elvisoliveira.yellowpages.beans.GeocodeBean;
+import com.elvisoliveira.yellowpages.webservice.GeoCode;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -253,29 +255,45 @@ public class MainWindow {
 
     public static void setContactInfo(ContactBean info) {
 
-        tabbedMaps.removeAll();
-
-        tabbedMaps.addTab("Google Maps", null, google, null);
-        tabbedMaps.addTab("Bing Maps", null, bing, null);
-        tabbedMaps.addTab("Yahoo! Maps", null, yahoo, null);
-        tabbedMaps.addTab("Nokia Maps", null, nokia, null);
-
-        panelMaps.setLayout(new MigLayout("inset 0", "[grow]", "[grow]"));
-        panelMaps.add(tabbedMaps, "cell 0 0,grow");
-
-        contactinfo.getContentPane().removeAll();
-
-        contactinfo.getContentPane().add(new JLabel("Nome"), "cell 0 0");
-        contactinfo.getContentPane().add(new JLabel(info.getName()), "cell 1 0");
-        contactinfo.getContentPane().add(new JLabel("Endereço"), "cell 0 1");
-        contactinfo.getContentPane().add(new JLabel(info.getAddress()), "cell 1 1");
-        contactinfo.getContentPane().add(new JLabel("Telefone"), "cell 0 2");
-        contactinfo.getContentPane().add(new JLabel(info.getTelephone()), "cell 1 2");
-        contactinfo.getContentPane().add(panelMaps, "cell 0 3 2 1,grow");
-
-        contactinfo.revalidate();
-        contactinfo.repaint();
-        contactinfo.setVisible(true);
+        try {
+            // get information
+            String name = info.getName();
+            String address = info.getAddress();
+            String telephone = info.getTelephone();
+            
+            GeocodeBean addressDetailed = GeoCode.geocode(address);
+            
+            System.out.println(addressDetailed.getResults_address_components());
+            
+            // setup panel contact
+            tabbedMaps.removeAll();
+            
+            tabbedMaps.addTab("Google Maps", null, google, null);
+            tabbedMaps.addTab("Bing Maps", null, bing, null);
+            tabbedMaps.addTab("Yahoo! Maps", null, yahoo, null);
+            tabbedMaps.addTab("Nokia Maps", null, nokia, null);
+            
+            panelMaps.setLayout(new MigLayout("inset 0", "[grow]", "[grow]"));
+            panelMaps.add(tabbedMaps, "cell 0 0,grow");
+            
+            contactinfo.getContentPane().removeAll();
+            
+            contactinfo.getContentPane().add(new JLabel("Name"), "cell 0 0");
+            contactinfo.getContentPane().add(new JLabel(name), "cell 1 0");
+            contactinfo.getContentPane().add(new JLabel("Address"), "cell 0 1");
+            contactinfo.getContentPane().add(new JLabel(address), "cell 1 1");
+            contactinfo.getContentPane().add(new JLabel("Telephone"), "cell 0 2");
+            contactinfo.getContentPane().add(new JLabel(telephone), "cell 1 2");
+            contactinfo.getContentPane().add(panelMaps, "cell 0 3 2 1,grow");
+            
+            contactinfo.setTitle("Contact Information");
+            contactinfo.revalidate();
+            contactinfo.repaint();
+            contactinfo.setVisible(true);
+        }
+        catch (Exception ex) {
+            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }
 
