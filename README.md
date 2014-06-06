@@ -2,6 +2,8 @@
 
 ![alt tag](http://i.imgur.com/AAzkzn3.jpg)
 
+![alt tag](http://i.imgur.com/7IBcjXb.png)
+
 How to manually run:
 
 * Build the Maven package.
