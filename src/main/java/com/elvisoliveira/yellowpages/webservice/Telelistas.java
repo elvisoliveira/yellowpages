@@ -56,15 +56,15 @@ public class Telelistas {
         String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
 
         System.out.println(url);
-        
+
         try {
             Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
             String address = doc.select("p.infoplus_text1").text();
             String telephone = doc.select("p.infoplus_text2").text();
-            
+
             doc.select("td.nome_anun span").empty();
-            
+
             String name = doc.select("td.nome_anun").text();
 
             ContactBean contact = new ContactBean();
@@ -72,7 +72,7 @@ public class Telelistas {
             contact.setLink(url);
             contact.setName(name);
             contact.setTelephone(telephone);
-            
+
             return contact;
 
         }

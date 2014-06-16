@@ -37,65 +37,10 @@ public class GeoCode {
     }
 
     private static GeocodeBean parseJson(String json) throws ParseException {
-        // load the javaBean
-        addressinfo = new GeocodeBean();
-        // ready the parser object
-        JSONParser parser = new JSONParser();
-        // supply the json to be parsed
-        JSONObject jsonObject = (JSONObject) parser.parse(json);
-        // status
-        addressinfo.setStatus((String) jsonObject.get("status"));
-
-        // results: address_components
-        address_components = new ArrayList<>();
-
-        for (Object results : (JSONArray) jsonObject.get("results")) {
-
-            JSONObject address_components_iterator = (JSONObject) results;
-
-            address = new ArrayList<>();
-
-            for (Object address_components_index : (JSONArray) address_components_iterator.get("address_components")) {
-
-                JSONObject address_components_object = (JSONObject) address_components_index;
-
-                JSONArray typesArray = (JSONArray) address_components_object.get("types");
-
-                Map<String, String> map = new HashMap<>();
-
-                map.put("long_name", (String) address_components_object.get("long_name"));
-                map.put("short_name", (String) address_components_object.get("short_name"));
-                map.put("types", (String) typesArray.get(0));
-
-                address_components.add(map);
-            }
-
-            address.add(address_components);
-        }
-
-        addressinfo.setResults_address_components(address);
-
-        return addressinfo;
-
-        // address_componentss
-        // long_name
-        // short_name
-        // types
-        // get the first item
-        // formatted_address
-        // geometry
-        // location
-        // lat
-        // lng
-        // location_type
-        // viewport
-        // northeast
-        // lat
-        // lng
-        // southwest
-        // lat
-        // lng
-        // types
+        
+        System.out.println(json);
+        
+        return null;
     }
 
     private static String getJson(String urlParam) throws Exception {
