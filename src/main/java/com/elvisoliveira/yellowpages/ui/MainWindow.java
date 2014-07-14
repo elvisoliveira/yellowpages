@@ -1,41 +1,32 @@
 package com.elvisoliveira.yellowpages.ui;
 
 import com.elvisoliveira.yellowpages.beans.ContactBean;
-import com.elvisoliveira.yellowpages.beans.GeocodeBean;
-import com.elvisoliveira.yellowpages.webservice.GeoCode;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
-import org.apache.commons.io.IOUtils;
 import org.jsoup.nodes.Document;
 
 public class MainWindow {
@@ -45,25 +36,15 @@ public class MainWindow {
     private static DefaultTableModel contactsTable;
     private static JTextField searchInput;
     private static JButton searchButton;
-    private static JButton viewButton;
-    private static JButton detailsButton;
     private static ArrayList<Map> contactsArray;
+    private static JProgressBar progress;
 
-    private static final ArrayList<String> arguments = new ArrayList();
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
-    private static final JPanel panelContact = new JPanel();
 
     // contact information panel    
     private static final JDialog contactinfo = new JDialog(window, "", true);
-
     private static final JPanel panelMaps = new JPanel();
-    private static final JTabbedPane tabbedMaps = new JTabbedPane(JTabbedPane.TOP);
-
-    private static final JPanel google = new JPanel();
-    private static final JPanel bing = new JPanel();
-    private static final JPanel yahoo = new JPanel();
-    private static final JPanel nokia = new JPanel();
 
     public static void setContacts(String name) throws IOException {
 
@@ -88,12 +69,15 @@ public class MainWindow {
         contactsListing.setViewportView(new JLabel("Search a contact", JLabel.CENTER));
         contactsListing.setPreferredSize(new Dimension(400, 400));
 
+        progress = new JProgressBar();
+        progress.setIndeterminate(false);
+
         // layout configuration        
-        panel.setLayout(new MigLayout(""));
-        panel.add(searchInput, "growx, growy, split 2");
+        panel.setLayout(new MigLayout("debug"));
+        panel.add(searchInput, "grow, split 2");
         panel.add(searchButton, "wrap");
         panel.add(contactsListing, "wrap");
-        panel.add(panelContact, "growx");
+        panel.add(progress, "growx, wrap");
 
         // dialog of the detailed information about the selected contact
         contactinfo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -101,7 +85,7 @@ public class MainWindow {
         contactinfo.setVisible(false);
 
         // dialog of contact information (with maps)
-        contactinfo.setLayout(new MigLayout("", "[62px][grow,fill]", "[15px][15px][15px][grow]"));
+        contactinfo.setLayout(new MigLayout(""));
 
         // window configuration
         window.add(panel);
@@ -109,50 +93,26 @@ public class MainWindow {
         window.pack();
         window.setVisible(true);
         window.setResizable(false);
-
     }
 
     public static void searchButton() {
+        // loading
+        progress.setIndeterminate(true);
 
-        try {
-            // get the loading image
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            InputStream in = classLoader.getResourceAsStream("ajax-loader.gif");
-            Image ajaxLoaders = Toolkit.getDefaultToolkit().createImage(IOUtils.toByteArray(in));
+        final String name = searchInput.getText();
 
-            // BufferedImage ajaxLoaders = ImageIO.read(stream);
-            // set the loading screen, while the SwingWorker class is working
-            contactsListing.setViewportView(new JLabel("loading... ", new ImageIcon(ajaxLoaders), JLabel.CENTER));
+        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() throws IOException {
 
-            // get the inputted name
-            final String name = searchInput.getText();
+                // this will be executed in background
+                MainWindow.changeContacts(name);
 
-            // set the SwingWorker class as a buffer streammer
-            SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
-                @Override
-                public Void doInBackground() throws IOException {
-
-                    // if isset, remove the detailed pannel
-                    panelContact.removeAll();
-                    panelContact.setMinimumSize(new Dimension(0, 0));
-                    panelContact.setVisible(false);
-
-                    panel.validate();
-
-                    // this will be executed in background
-                    changeContacts(name);
-
-                    // return anything
-                    return null;
-                }
-            };
-
-            // make the swingWorker work
-            swingWorker.execute();
-        }
-        catch (IOException ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                // return anything
+                return null;
+            }
+        };
+        swingWorker.execute();
     }
 
     public static void changeContacts(String name) throws IOException {
@@ -192,7 +152,6 @@ public class MainWindow {
                 map.put("link", object.getLink());
 
                 contactsArray.add(map);
-
                 contactsTable.addRow(new Object[]{object.getName(), object.getAddress().trim()});
             }
 
@@ -200,101 +159,121 @@ public class MainWindow {
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.setModel(contactsTable);
             table.addMouseListener(new MouseAdapter() {
+                // right click
                 @Override
-                public void mousePressed(MouseEvent me) {
-                    selectContact(contactsArray.get(table.getSelectedRow()));
+                public void mouseReleased(MouseEvent event) {
+                    Integer row = table.getSelectedRow();
+                    //
+                    if (row > 0) {
+                        selectContact(event, contactsArray.get(row));
+                    }
                 }
+                // normal click
+                // @Override
+                // public void mousePressed(MouseEvent me) {
+                //     selectContact(contactsArray.get(table.getSelectedRow()));
+                // }
             });
 
             contactsListing.setViewportView(table);
+
+            // loading
+            progress.setIndeterminate(false);
+
         }
 
     }
 
-    public static void selectContact(final Map info) {
+    public static void selectContact(MouseEvent event, final Map info) {
 
-        JPanel panelInfo;
-        JPanel panelActions;
+        JTable source = (JTable) event.getSource();
 
-        arguments.clear();
-        arguments.add((String) info.get("link"));
+        JMenuItem itemDetails = new JMenuItem("Details");
+        JMenuItem itemBrowser = new JMenuItem("Open on \"{Default Browser}\"");
 
-        // view detailed information on browser
-        viewButton = new JButton();
-        viewButton.setText("View on Browser");
-        viewButton.addActionListener(new MainWindowActionListener("viewOnBrowser", arguments));
+        final JPopupMenu popupMenu = new JPopupMenu();
 
-        // view detailed information on app
-        detailsButton = new JButton();
-        detailsButton.setText("Details");
-        detailsButton.addActionListener(new MainWindowActionListener("viewOnApp", arguments));
+        // details buttom
+        itemDetails.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-        panelInfo = new JPanel(new MigLayout("", "[62px][]", "[15px][15px][15px]"));
-        panelInfo.add(new JLabel("Nome"), "cell 0 0,alignx left,aligny top");
-        panelInfo.add(new JLabel("Address"), "cell 0 1,alignx left,aligny top");
-        panelInfo.add(new JLabel("Link"), "cell 0 2,alignx left,aligny top");
-        panelInfo.add(new JLabel((String) info.get("name")), "cell 1 0,growx,aligny top, wmin 0");
-        panelInfo.add(new JLabel((String) info.get("address")), "cell 1 1,growx,aligny top, wmin 0");
-        panelInfo.add(new JLabel((String) info.get("link")), "cell 1 2,growx,aligny top, wmin 0");
+                // loading
+                progress.setIndeterminate(true);
 
-        panelActions = new JPanel(new MigLayout("inset 0", "[][]", "[]"));
-        panelActions.add(viewButton, "cell 0 0");
-        panelActions.add(detailsButton, "cell 1 0");
+                SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+                    @Override
+                    public Void doInBackground() throws IOException {
 
-        panelContact.removeAll();
-        panelContact.setLayout(new MigLayout("", "[]", "[][]"));
-        panelContact.setMinimumSize(new Dimension(400, 130));
-        panelContact.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray));
-        panelContact.setVisible(true);
-        panelContact.add(panelInfo, "cell 0 0,grow");
-        panelContact.add(panelActions, "cell 0 1,grow");
+                        Integer userInfo = Telelistas.getUserID((String) (String) info.get("link"));
 
-        panel.validate();
+                        // loading
+                        progress.setIndeterminate(false);
+
+                        // set and show the contact window information
+                        MainWindow.setContactInfo(Telelistas.getContactInfo(userInfo));
+
+                        // return anything
+                        return null;
+                    }
+                };
+
+                swingWorker.execute();
+
+            }
+        });
+
+        // browser buttom
+        // @TODO: Change {Default Browser} for the name of the user default browser
+        itemBrowser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println((String) info.get("address"));
+                System.out.println((String) info.get("link"));
+                System.out.println((String) info.get("name"));
+            }
+        });
+
+        // setup menu itens
+        popupMenu.add(itemDetails);
+        popupMenu.add(itemBrowser);
+
+        if (event.isPopupTrigger()) {
+
+            int row = source.rowAtPoint(event.getPoint());
+            int column = source.columnAtPoint(event.getPoint());
+
+            if (!source.isRowSelected(row)) {
+                source.changeSelection(row, column, false, false);
+            }
+
+            popupMenu.show(event.getComponent(), event.getX(), event.getY());
+        }
 
     }
 
     public static void setContactInfo(ContactBean info) {
 
-        try {
-            // get information
-            String name = info.getName();
-            String address = info.getAddress();
-            String telephone = info.getTelephone();
-            
-            GeocodeBean addressDetailed = GeoCode.geocode(address);
-            
-            System.out.println(addressDetailed.getResults_address_components());
-            
-            // setup panel contact
-            tabbedMaps.removeAll();
-            
-            tabbedMaps.addTab("Google Maps", null, google, null);
-            tabbedMaps.addTab("Bing Maps", null, bing, null);
-            tabbedMaps.addTab("Yahoo! Maps", null, yahoo, null);
-            tabbedMaps.addTab("Nokia Maps", null, nokia, null);
-            
-            panelMaps.setLayout(new MigLayout("inset 0", "[grow]", "[grow]"));
-            panelMaps.add(tabbedMaps, "cell 0 0,grow");
-            
-            contactinfo.getContentPane().removeAll();
-            
-            contactinfo.getContentPane().add(new JLabel("Name"), "cell 0 0");
-            contactinfo.getContentPane().add(new JLabel(name), "cell 1 0");
-            contactinfo.getContentPane().add(new JLabel("Address"), "cell 0 1");
-            contactinfo.getContentPane().add(new JLabel(address), "cell 1 1");
-            contactinfo.getContentPane().add(new JLabel("Telephone"), "cell 0 2");
-            contactinfo.getContentPane().add(new JLabel(telephone), "cell 1 2");
-            contactinfo.getContentPane().add(panelMaps, "cell 0 3 2 1,grow");
-            
-            contactinfo.setTitle("Contact Information");
-            contactinfo.revalidate();
-            contactinfo.repaint();
-            contactinfo.setVisible(true);
-        }
-        catch (Exception ex) {
-            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        // get information
+        String name = info.getName();
+        String address = info.getAddress();
+        String telephone = info.getTelephone();
 
+        contactinfo.getContentPane().removeAll();
+
+        contactinfo.getContentPane().add(new JLabel("Name"), "cell 0 0");
+        contactinfo.getContentPane().add(new JLabel(name), "cell 1 0");
+        contactinfo.getContentPane().add(new JLabel("Address"), "cell 0 1");
+        contactinfo.getContentPane().add(new JLabel(address), "cell 1 1");
+        contactinfo.getContentPane().add(new JLabel("Telephone"), "cell 0 2");
+        contactinfo.getContentPane().add(new JLabel(telephone), "cell 1 2");
+        contactinfo.getContentPane().add(panelMaps, "cell 0 3 2 1,grow");
+
+        contactinfo.setTitle("Contact Information");
+        contactinfo.revalidate();
+        contactinfo.repaint();
+
+        contactinfo.setVisible(true);
     }
 
 }
