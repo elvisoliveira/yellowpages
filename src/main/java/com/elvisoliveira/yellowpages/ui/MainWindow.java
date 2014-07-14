@@ -197,7 +197,7 @@ public class MainWindow {
                         
                         ContactDetails contact = new ContactDetails(window);
                         
-                        contact.setContactInfo(Telelistas.getContactInfo(userInfo));
+                        ContactDetails(window).setContactInfo(Telelistas.getContactInfo(userInfo));
 
                         // return anything
                         return null;
