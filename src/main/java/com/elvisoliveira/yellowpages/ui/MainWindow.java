@@ -156,6 +156,11 @@ public class MainWindow {
                         MainWindow.selectContact(event, contactsList.get(row));
                     }
                 }
+                // normal click
+                // @Override
+                // public void mousePressed(MouseEvent me) {
+                //     selectContact(contactsArray.get(table.getSelectedRow()));
+                // }
             });
 
             contactsListing.setViewportView(table);
