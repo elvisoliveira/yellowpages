@@ -6,8 +6,6 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -51,14 +49,20 @@ public class MainWindow {
 
         // serach field
         searchInput = new JTextField();
+        searchInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MainWindow.searchButton();
+            }
+        });
 
         // search button
         searchButton = new JButton();
         searchButton.setText("Search");
         searchButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent evt) {
-                searchButton();
+            public void actionPerformed(ActionEvent e) {
+                MainWindow.searchButton();
             }
         });
 
