@@ -41,6 +41,7 @@ public class MainWindow {
     private static JTextField searchInput;
     private static JButton searchButton;
     private static JProgressBar progress;
+    private static List<ContactBean> contactsList;
 
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
@@ -114,9 +115,7 @@ public class MainWindow {
         swingWorker.execute();
     }
 
-    public static void changeContacts(String name) throws IOException {
-
-        final List<ContactBean> contactsList;
+    private static void changeContacts(String name) throws IOException {
 
         // make the request and return the Document
         Document document = Telelistas.generateDocument(name);
@@ -174,6 +173,18 @@ public class MainWindow {
         progress.setIndeterminate(false);
         
     }
+    
+    public static Integer changeContacts(Boolean iterator) {
+    
+        Integer operation = (iterator) ? 1 : -1;
+
+        Integer selected = table.getSelectedRow() + operation;
+        
+        table.setRowSelectionInterval(selected, selected);
+        
+        return selected;
+
+    }
 
     public static void selectContact(MouseEvent event, final ContactBean info) {
 
@@ -205,7 +216,7 @@ public class MainWindow {
                         
                         ContactDetails contact = new ContactDetails(window);
                         
-                        contact.setContactInfo(Telelistas.getContactInfo(userInfo));
+                        contact.setContactInfo(Telelistas.getContactInfo(userInfo), contactsList);
 
                         // return anything
                         return null;
