@@ -6,6 +6,8 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -18,11 +20,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -85,10 +84,10 @@ public class MainWindow {
         // window configuration
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.pack();
         window.setJMenuBar(MainMenu.getMenu());
-        window.setVisible(true);
         window.setResizable(false);
+        window.setVisible(true);
+        window.pack();
     }
 
     public static void searchButton() {
@@ -202,7 +201,7 @@ public class MainWindow {
                         
                         ContactDetails contact = new ContactDetails(window);
                         
-                        ContactDetails(window).setContactInfo(Telelistas.getContactInfo(userInfo));
+                        contact.setContactInfo(Telelistas.getContactInfo(userInfo));
 
                         // return anything
                         return null;

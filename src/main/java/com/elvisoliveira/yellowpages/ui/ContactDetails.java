@@ -24,7 +24,7 @@ public class ContactDetails {
         contactinfo.setLayout(new MigLayout(""));
     }
 
-    public static void setContactInfo(ContactBean info) {
+    public void setContactInfo(ContactBean info) {
 
         // get information
         String name = info.getName();

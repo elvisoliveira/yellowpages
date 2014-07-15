@@ -26,6 +26,6 @@ public class YellowPages {
         // geocode geocode = new geocode();
         // geocode.geocode("1600 Amphitheatre Parkway, Mountain View, CA");
         // App startup
-        MainWindow.setContacts("");
+        MainWindow.MainWindow(null);
     }
 }
