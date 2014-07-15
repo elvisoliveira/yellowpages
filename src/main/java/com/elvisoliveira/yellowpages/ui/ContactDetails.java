@@ -5,46 +5,49 @@ import java.awt.Dimension;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import net.miginfocom.swing.MigLayout;
 
 public class ContactDetails {
 
     // contact information panel    
-    public static JDialog contactinfo;
+    private final JDialog cDialog;
+    private JPanel cPanel;
 
     public ContactDetails(JFrame window) {
-        contactinfo = new JDialog(window, "", true);
+        // setup jdialog
+        cDialog = new JDialog(window, "", true);
 
         // dialog of the detailed information about the selected contact
-        contactinfo.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        contactinfo.setSize(new Dimension(500, 500));
-        contactinfo.setVisible(false);
+        cDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        cDialog.setSize(new Dimension(500, 500));
+        cDialog.setVisible(false);
 
         // dialog of contact information (with maps)
-        contactinfo.setLayout(new MigLayout(""));
+        cDialog.setLayout(new MigLayout("debug", "[grow, fill]"));
     }
 
     public void setContactInfo(ContactBean info) {
 
-        // get information
-        String name = info.getName();
-        String address = info.getAddress();
-        String telephone = info.getTelephone();
+        cPanel = new JPanel();
+        cPanel.setLayout(new MigLayout("debug, inset 0"));
+        
+        cPanel.add(new JLabel("Name"), "cell 0 0");
+        cPanel.add(new JLabel("Address"), "cell 0 1");
+        cPanel.add(new JLabel("Telephone"), "cell 0 2");
+        
+        cPanel.add(new JLabel(info.getName()), "cell 1 0, growx");
+        cPanel.add(new JLabel(info.getAddress()), "cell 1 1, growx");
+        cPanel.add(new JLabel(info.getTelephone()), "cell 1 2, growx");
+        
+        cDialog.getContentPane().removeAll();
+        cDialog.getContentPane().add(cPanel);
 
-        contactinfo.getContentPane().removeAll();
+        cDialog.setTitle("Contact Information: " + info.getName());
+        cDialog.revalidate();
+        cDialog.repaint();
 
-        contactinfo.getContentPane().add(new JLabel("Name"), "cell 0 0");
-        contactinfo.getContentPane().add(new JLabel(name), "cell 1 0");
-        contactinfo.getContentPane().add(new JLabel("Address"), "cell 0 1");
-        contactinfo.getContentPane().add(new JLabel(address), "cell 1 1");
-        contactinfo.getContentPane().add(new JLabel("Telephone"), "cell 0 2");
-        contactinfo.getContentPane().add(new JLabel(telephone), "cell 1 2");
-
-        contactinfo.setTitle("Contact Information");
-        contactinfo.revalidate();
-        contactinfo.repaint();
-
-        contactinfo.setVisible(true);
+        cDialog.setVisible(true);
     }
 
 }

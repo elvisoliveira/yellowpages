@@ -164,11 +164,11 @@ public class MainWindow {
 
             contactsListing.setViewportView(table);
 
-            // loading
-            progress.setIndeterminate(false);
-
         }
-
+        
+        // loading
+        progress.setIndeterminate(false);
+        
     }
 
     public static void selectContact(MouseEvent event, final ContactBean info) {
