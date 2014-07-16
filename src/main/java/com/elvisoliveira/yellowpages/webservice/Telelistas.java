@@ -54,8 +54,6 @@ public class Telelistas {
 
         String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
 
-        System.out.println(url);
-
         try {
             Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
