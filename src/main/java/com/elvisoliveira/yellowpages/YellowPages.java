@@ -1,5 +1,6 @@
 package com.elvisoliveira.yellowpages;
 
+import com.elvisoliveira.yellowpages.DAO.ContactModel;
 import com.elvisoliveira.yellowpages.ui.MainWindow;
 
 import java.io.IOException;

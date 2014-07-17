@@ -17,8 +17,16 @@ public class MainMenu {
             }
         });
 
-        JMenuItem menuList = new JMenuItem("List");
+        JMenuItem menuList = new JMenuItem("List Contacts");
         menuList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        
+        JMenuItem menuListNames = new JMenuItem("List Names");
+        menuListNames.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
@@ -30,6 +38,7 @@ public class MainMenu {
 
         JMenu menuContacts = new JMenu("Contacts");
         menuContacts.add(menuList);
+        menuContacts.add(menuListNames);
 
         JMenuBar menu = new JMenuBar();
         menu.add(menuFile);
@@ -38,5 +47,4 @@ public class MainMenu {
         return menu;
 
     }
-
 }

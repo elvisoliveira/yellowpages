@@ -6,6 +6,7 @@ public class ContactBean {
     private String Address;
     private String Link;
     private String Telephone;
+    private String Id;
 
     public String getName() {
         return Name.replace(String.valueOf((char) 160), " ").trim();
@@ -37,6 +38,14 @@ public class ContactBean {
 
     public void setTelephone(String Telephone) {
         this.Telephone = Telephone;
+    }
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String Id) {
+        this.Id = Id;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.elvisoliveira.yellowpages.ui;
 
+import com.elvisoliveira.yellowpages.DAO.ContactModel;
 import com.elvisoliveira.yellowpages.beans.ContactBean;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Dimension;
@@ -24,8 +25,12 @@ public class ContactDetails {
     private final JDialog cDialog;
     private JPanel cPanel;
     private JPanel aPanel;
-    private JButton nButton;
-    private JButton pButton;
+    
+    private static ContactBean contact;
+    
+    private static JButton nButton;
+    private static JButton pButton;
+    private static JButton iButton;
 
     private static final JProgressBar progress = new JProgressBar();
     private static final JTextField name = new JTextField();
@@ -48,9 +53,11 @@ public class ContactDetails {
 
     public void setContactInfo(ContactBean info, final List<ContactBean> contacts) {
 
-        name.setText(info.getName());
-        address.setText(info.getAddress());
-        telephone.setText(info.getTelephone());
+        ContactDetails.contact = info;
+        
+        name.setText(ContactDetails.contact.getName());
+        address.setText(ContactDetails.contact.getAddress());
+        telephone.setText(ContactDetails.contact.getTelephone());
 
         nButton = new JButton();
         nButton.setText("Next");
@@ -75,10 +82,19 @@ public class ContactDetails {
                 ContactDetails.setContactInfo(contactLink);
             }
         });
+        
+        iButton = new JButton();
+        iButton.setText("Insert");
+        iButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ContactModel.setContact(contact);
+            }
+        });
 
         aPanel = new JPanel();
         aPanel.setLayout(new MigLayout("inset 0", "[grow][][]", "[]"));
-        aPanel.add(new JButton("Insert"), "cell 0 0");
+        aPanel.add(iButton, "cell 0 0");
         aPanel.add(pButton, "cell 1 0");
         aPanel.add(nButton, "cell 2 0");
 
@@ -97,7 +113,7 @@ public class ContactDetails {
 
         cDialog.getContentPane().removeAll();
         cDialog.getContentPane().add(cPanel, "cell 0 0,grow");
-        cDialog.setTitle("Contact Information: " + info.getName());
+        cDialog.setTitle("Contact Information: " + ContactDetails.contact.getName());
         cDialog.revalidate();
         cDialog.repaint();
         cDialog.setVisible(true);
@@ -110,17 +126,30 @@ public class ContactDetails {
         // loading
         progress.setIndeterminate(true);
 
+        // disable all actions
+        iButton.setEnabled(false);
+        pButton.setEnabled(false);
+        nButton.setEnabled(false);
+        
         SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
             @Override
             public Void doInBackground() throws IOException {
                 // this will be executed in background
                 ContactBean beanContact = Telelistas.getContactInfo(userInfo);
 
+                ContactDetails.contact = beanContact;                
+                
                 name.setText(beanContact.getName());
                 address.setText(beanContact.getAddress());
                 telephone.setText(beanContact.getTelephone());
 
+                // disable loading
                 progress.setIndeterminate(false);
+                
+                // enable all actions
+                iButton.setEnabled(true);
+                pButton.setEnabled(true);
+                nButton.setEnabled(true);
                 
                 // return anything
                 return null;

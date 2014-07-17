@@ -69,6 +69,7 @@ public class Telelistas {
             contact.setLink(url);
             contact.setName(name);
             contact.setTelephone(telephone);
+            contact.setId(id.toString());
 
             return contact;
 
