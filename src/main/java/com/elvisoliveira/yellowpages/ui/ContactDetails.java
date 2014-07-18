@@ -26,7 +26,7 @@ public class ContactDetails {
     private JPanel cPanel;
     private JPanel aPanel;
     
-    private static ContactBean contact;
+    private ContactBean contact;
     
     private static JButton nButton;
     private static JButton pButton;
@@ -53,11 +53,11 @@ public class ContactDetails {
 
     public void setContactInfo(ContactBean info, final List<ContactBean> contacts) {
 
-        ContactDetails.contact = info;
+        this.contact = info;
         
-        name.setText(ContactDetails.contact.getName());
-        address.setText(ContactDetails.contact.getAddress());
-        telephone.setText(ContactDetails.contact.getTelephone());
+        name.setText(this.contact.getName());
+        address.setText(this.contact.getAddress());
+        telephone.setText(this.contact.getTelephone());
 
         nButton = new JButton();
         nButton.setText("Next");
@@ -67,7 +67,7 @@ public class ContactDetails {
                 Integer target = MainWindow.changeContacts(Boolean.TRUE);
                 String contactLink = contacts.get(target).getLink();
 
-                ContactDetails.setContactInfo(contactLink);
+                ContactDetails.this.setContactInfo(contactLink);
             }
         });
 
@@ -79,7 +79,7 @@ public class ContactDetails {
                 Integer target = MainWindow.changeContacts(Boolean.FALSE);
                 String contactLink = contacts.get(target).getLink();
 
-                ContactDetails.setContactInfo(contactLink);
+                ContactDetails.this.setContactInfo(contactLink);
             }
         });
         
@@ -88,7 +88,10 @@ public class ContactDetails {
         iButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ContactModel.setContact(contact);
+                
+                ContactModel contactm = new ContactModel();
+                
+                Boolean teste  = contactm.setContact(contact);
             }
         });
 
@@ -113,13 +116,13 @@ public class ContactDetails {
 
         cDialog.getContentPane().removeAll();
         cDialog.getContentPane().add(cPanel, "cell 0 0,grow");
-        cDialog.setTitle("Contact Information: " + ContactDetails.contact.getName());
+        cDialog.setTitle("Contact Information: " + this.contact.getName());
         cDialog.revalidate();
         cDialog.repaint();
         cDialog.setVisible(true);
     }
 
-    private static void setContactInfo(String link) {
+    private void setContactInfo(String link) {
 
         final Integer userInfo = Telelistas.getUserID(link);
 
@@ -131,13 +134,13 @@ public class ContactDetails {
         pButton.setEnabled(false);
         nButton.setEnabled(false);
         
-        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+        SwingWorker<ContactBean, Void> swingWorker = new SwingWorker<ContactBean, Void>() {
             @Override
-            public Void doInBackground() throws IOException {
+            public ContactBean doInBackground() {
                 // this will be executed in background
                 ContactBean beanContact = Telelistas.getContactInfo(userInfo);
 
-                ContactDetails.contact = beanContact;                
+                ContactDetails.this.contact = beanContact;
                 
                 name.setText(beanContact.getName());
                 address.setText(beanContact.getAddress());
@@ -152,7 +155,7 @@ public class ContactDetails {
                 nButton.setEnabled(true);
                 
                 // return anything
-                return null;
+                return beanContact;
             }
         };
         swingWorker.execute();

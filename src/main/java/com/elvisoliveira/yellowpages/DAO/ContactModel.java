@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class ContactModel {
+    
+    private String message;
 
     public void getAll() {
         try {
@@ -17,16 +19,47 @@ public class ContactModel {
         } catch (SQLException | ClassNotFoundException e) {
         }
     }
-    
-    public static void setContact(ContactBean contact) {
-        String sql = "INSERT INTO \"main\".\"contacts\" (\"id_telelistas\", \"name\", \"telephone\", \"address\", \"other\") VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")";
-        String query = String.format(sql, contact.getId(), contact.getName(), contact.getTelephone(), contact.getAddress(), contact.getLink());
+
+    public Boolean setContact(ContactBean contact) {
 
         try {
+
+            String sql = "INSERT INTO \"main\".\"contacts\" (\"id_telelistas\",   "
+                         + "                                   \"name\",          "
+                         + "                                   \"telephone\",     "
+                         + "                                   \"address\",       "
+                         + "                                   \"other\")         "
+                         + "   VALUES (\"%s\",\"%s\",\"%s\",\"%s\",\"%s\");       ";
+
+            String query = String.format(sql,
+                                         contact.getId(),
+                                         contact.getName(),
+                                         contact.getTelephone(),
+                                         contact.getAddress(),
+                                         contact.getLink());
+
             SQLite db = new SQLite();
-            int rs = db.stm.executeUpdate(query);
-        } catch (SQLException | ClassNotFoundException ex) {
             
+            Integer rs = db.stm.executeUpdate(query);
+            
+            return true;
+            
+        } catch (SQLException | ClassNotFoundException ex) {
+
+            this.setMessage(ex.getMessage());
+            
+            return false;
         }
     }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    
+
 }
