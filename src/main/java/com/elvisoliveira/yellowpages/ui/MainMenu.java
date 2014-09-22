@@ -6,29 +6,37 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
-public class MainMenu {
+public class MainMenu
+{
 
-    public static JMenuBar getMenu() {
+    public static JMenuBar getMenu()
+    {
         JMenuItem menuExit = new JMenuItem("Exit");
-        menuExit.addActionListener(new ActionListener() {
+        menuExit.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.exit(0);
             }
         });
 
         JMenuItem menuList = new JMenuItem("List Contacts");
-        menuList.addActionListener(new ActionListener() {
+        menuList.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.exit(0);
             }
         });
-        
+
         JMenuItem menuListNames = new JMenuItem("List Names");
-        menuListNames.addActionListener(new ActionListener() {
+        menuListNames.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 System.exit(0);
             }
         });

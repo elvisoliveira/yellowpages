@@ -13,11 +13,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Telelistas {
+public class Telelistas
+{
 
     private static String[] tokens;
 
-    public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException {
+    public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException
+    {
 
         String name = URLEncoder.encode(initName, "ISO-8859-1");
 
@@ -28,7 +30,8 @@ public class Telelistas {
         return doc;
     }
 
-    public static Integer totalContacts(Document doc) {
+    public static Integer totalContacts(Document doc)
+    {
 
         Elements contacts = doc.select("div#Content_Regs > table");
 
@@ -36,13 +39,16 @@ public class Telelistas {
 
     }
 
-    public static Integer getUserID(String url) {
+    public static Integer getUserID(String url)
+    {
         // get the tokens retuned of string
         tokens = url.split("/");
 
-        for (String string : tokens) {
+        for (String string : tokens)
+        {
             // find ont token that has only numbers
-            if (string.matches("[-+]?\\d*\\.?\\d+")) {
+            if (string.matches("[-+]?\\d*\\.?\\d+"))
+            {
                 // define as contact ID (of telelistas)
                 return Integer.parseInt(string);
             }
@@ -50,11 +56,13 @@ public class Telelistas {
         return null;
     }
 
-    public static ContactBean getContactInfo(Integer id) {
+    public static ContactBean getContactInfo(Integer id)
+    {
 
         String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
 
-        try {
+        try
+        {
             Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
             String address = doc.select("p.infoplus_text1").text();
@@ -74,7 +82,8 @@ public class Telelistas {
             return contact;
 
         }
-        catch (IOException ex) {
+        catch (IOException ex)
+        {
             Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -82,13 +91,15 @@ public class Telelistas {
 
     }
 
-    public static List<ContactBean> telelistas(Document doc) {
+    public static List<ContactBean> telelistas(Document doc)
+    {
 
         List<ContactBean> contactsList = new ArrayList();
 
         Elements contacts = doc.select("div#Content_Regs > table");
 
-        for (Element contact : contacts) {
+        for (Element contact : contacts)
+        {
             // get information string
             String contactName = contact.select("td.text_resultado_ib > a").text();
             String contactAddress = contact.select("td.text_endereco_ib").text();

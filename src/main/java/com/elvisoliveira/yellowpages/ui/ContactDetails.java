@@ -6,7 +6,6 @@ import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -19,15 +18,16 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 
-public class ContactDetails {
+public class ContactDetails
+{
 
     // contact information panel    
     private final JDialog cDialog;
     private JPanel cPanel;
     private JPanel aPanel;
-    
+
     private ContactBean contact;
-    
+
     private static JButton nButton;
     private static JButton pButton;
     private static JButton iButton;
@@ -37,7 +37,8 @@ public class ContactDetails {
     private static final JTextField address = new JTextField();
     private static final JTextField telephone = new JTextField();
 
-    public ContactDetails(JFrame window) {
+    public ContactDetails(JFrame window)
+    {
         // setup jdialog
         cDialog = new JDialog(window, "", true);
 
@@ -51,19 +52,22 @@ public class ContactDetails {
         cDialog.setLayout(new MigLayout("", "[grow, fill]"));
     }
 
-    public void setContactInfo(ContactBean info, final List<ContactBean> contacts) {
+    public void setContactInfo(ContactBean info, final List<ContactBean> contacts)
+    {
 
         this.contact = info;
-        
+
         name.setText(this.contact.getName());
         address.setText(this.contact.getAddress());
         telephone.setText(this.contact.getTelephone());
 
         nButton = new JButton();
         nButton.setText("Next");
-        nButton.addActionListener(new ActionListener() {
+        nButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 Integer target = MainWindow.changeContacts(Boolean.TRUE);
                 String contactLink = contacts.get(target).getLink();
 
@@ -73,25 +77,29 @@ public class ContactDetails {
 
         pButton = new JButton();
         pButton.setText("Previous");
-        pButton.addActionListener(new ActionListener() {
+        pButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e)
+            {
                 Integer target = MainWindow.changeContacts(Boolean.FALSE);
                 String contactLink = contacts.get(target).getLink();
 
                 ContactDetails.this.setContactInfo(contactLink);
             }
         });
-        
+
         iButton = new JButton();
         iButton.setText("Insert");
-        iButton.addActionListener(new ActionListener() {
+        iButton.addActionListener(new ActionListener()
+        {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                
+            public void actionPerformed(ActionEvent e)
+            {
+
                 ContactModel contactm = new ContactModel();
-                
-                Boolean teste  = contactm.setContact(contact);
+
+                Boolean teste = contactm.setContact(contact);
             }
         });
 
@@ -122,7 +130,8 @@ public class ContactDetails {
         cDialog.setVisible(true);
     }
 
-    private void setContactInfo(String link) {
+    private void setContactInfo(String link)
+    {
 
         final Integer userInfo = Telelistas.getUserID(link);
 
@@ -133,27 +142,29 @@ public class ContactDetails {
         iButton.setEnabled(false);
         pButton.setEnabled(false);
         nButton.setEnabled(false);
-        
-        SwingWorker<ContactBean, Void> swingWorker = new SwingWorker<ContactBean, Void>() {
+
+        SwingWorker<ContactBean, Void> swingWorker = new SwingWorker<ContactBean, Void>()
+        {
             @Override
-            public ContactBean doInBackground() {
+            public ContactBean doInBackground()
+            {
                 // this will be executed in background
                 ContactBean beanContact = Telelistas.getContactInfo(userInfo);
 
                 ContactDetails.this.contact = beanContact;
-                
+
                 name.setText(beanContact.getName());
                 address.setText(beanContact.getAddress());
                 telephone.setText(beanContact.getTelephone());
 
                 // disable loading
                 progress.setIndeterminate(false);
-                
+
                 // enable all actions
                 iButton.setEnabled(true);
                 pButton.setEnabled(true);
                 nButton.setEnabled(true);
-                
+
                 // return anything
                 return beanContact;
             }
