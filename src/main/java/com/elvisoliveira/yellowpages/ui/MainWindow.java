@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -41,6 +42,7 @@ public class MainWindow
     private static DefaultTableModel contactsTable;
     private static JTextField searchInput;
     private static JButton searchButton;
+    private static JButton phonesButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
 
@@ -73,6 +75,19 @@ public class MainWindow
             }
         });
 
+        // Get phone numbers.
+        phonesButton = new JButton();
+        phonesButton.setText("Get Phones");
+        phonesButton.setEnabled(false);
+        phonesButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                MainWindow.phonesButton();
+            }
+        });
+
         // in the beginning of the execution
         // the name is not set, give the user instructions to search
         // set the widget dimentions, required to define layout properties
@@ -87,8 +102,9 @@ public class MainWindow
 
         // layout configuration        
         panel.setLayout(new MigLayout(""));
-        panel.add(searchInput, "grow, split 2");
-        panel.add(searchButton, "wrap");
+        panel.add(searchInput, "grow, split 3");
+        panel.add(searchButton);
+        panel.add(phonesButton, "wrap");
         panel.add(contactsListing, "wrap");
         panel.add(progress, "growx, wrap");
 
@@ -99,6 +115,32 @@ public class MainWindow
         window.setResizable(false);
         window.setVisible(true);
         window.pack();
+    }
+
+    public static void phonesButton()
+    {
+
+        // Add Column
+        List<String> columns = new ArrayList<>();
+
+        for (int i = 0; i < contactsTable.getColumnCount(); i++)
+        {
+            columns.add(contactsTable.getColumnName(i));
+        }
+
+        if (!columns.contains("Telephone"))
+        {
+            contactsTable.addColumn("Telephone");
+        }
+
+        // List Items
+        for (ContactBean contact : contactsList)
+        {
+
+            System.out.println(contact.getLink());
+            // Telelistas.getContactInfo(contact.getLink())
+        }
+
     }
 
     public static void searchButton()
@@ -136,11 +178,14 @@ public class MainWindow
         // if the total of returned contacts are zero, feedback one messange
         if (total.equals(0))
         {
+            phonesButton.setEnabled(false);
+
             contactsListing.setViewportView(new JLabel("no contacts with this name", JLabel.CENTER));
         }
         // if the total of returned contacts are greater than zero, return them
         else
         {
+            phonesButton.setEnabled(true);
 
             contactsTable = new DefaultTableModel()
             {
@@ -233,16 +278,13 @@ public class MainWindow
                     @Override
                     public Void doInBackground() throws IOException
                     {
-
-                        Integer userInfo = Telelistas.getUserID((String) (String) info.getLink());
-
                         // loading
                         progress.setIndeterminate(false);
 
                         // set and show the contact window information
                         ContactDetails contact = new ContactDetails(window);
 
-                        contact.setContactInfo(Telelistas.getContactInfo(userInfo), contactsList);
+                        contact.setContactInfo(Telelistas.getContactInfo(info.getLink()), contactsList);
 
                         // return anything
                         return null;

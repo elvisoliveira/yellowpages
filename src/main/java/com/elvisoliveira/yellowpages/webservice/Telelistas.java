@@ -1,13 +1,17 @@
 package com.elvisoliveira.yellowpages.webservice;
 
 import com.elvisoliveira.yellowpages.beans.ContactBean;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -56,33 +60,48 @@ public class Telelistas
         return null;
     }
 
-    public static ContactBean getContactInfo(Integer id)
+    public static ContactBean getContactInfo(String link)
     {
-
-        String url = "http://www.telelistas.net/templates/v_impressao_vcard.aspx?id=" + id.toString();
 
         try
         {
-            Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 
-            String address = doc.select("p.infoplus_text1").text();
-            String telephone = doc.select("p.infoplus_text2").text();
+            String currentfile = Telelistas.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String currentfolder = new File(currentfile).getParent();
 
-            doc.select("td.nome_anun span").empty();
+            Document doc = Jsoup.connect(link).userAgent("Mozilla").get();
 
-            String name = doc.select("td.nome_anun").text();
+            String name = doc.select("h1.nome_anun").text();
+
+            Elements phoneDOM = doc.select("div#anunciante div:nth-child(1)");
+            String phone = phoneDOM.text();
+
+            for (Element e : phoneDOM.select("img"))
+            {
+                if (e.attr("src").toLowerCase().contains("imgfactory"))
+                {
+                    Response resultImageResponse = Jsoup.connect(e.attr("src")).userAgent("Mozilla").ignoreContentType(true).execute();
+                    try (FileOutputStream out = new FileOutputStream(new File(currentfolder + "/" + name + ".gif")))
+                    {
+                        out.write(resultImageResponse.bodyAsBytes());
+                    }
+                }
+            }
+
+            phoneDOM.remove();
+
+            String address = doc.select("div#anunciante div:nth-child(1)").text();
 
             ContactBean contact = new ContactBean();
             contact.setAddress(address);
-            contact.setLink(url);
+            contact.setLink(link);
             contact.setName(name);
-            contact.setTelephone(telephone);
-            contact.setId(id.toString());
+            contact.setTelephone(phone);
 
             return contact;
 
         }
-        catch (IOException ex)
+        catch (IOException | URISyntaxException ex)
         {
             Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);
         }
