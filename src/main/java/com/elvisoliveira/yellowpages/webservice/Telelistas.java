@@ -96,7 +96,7 @@ public class Telelistas
 
         List<ContactBean> contactsList = new ArrayList();
 
-        Elements contacts = doc.select("div#Content_Regs > table");
+        Elements contacts = doc.select("div#Content_Regs > table:not([bgcolor])");
 
         for (Element contact : contacts)
         {
