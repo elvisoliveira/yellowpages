@@ -84,6 +84,7 @@ public class MainWindow
             @Override
             public void actionPerformed(ActionEvent e)
             {
+                phonesButton.setEnabled(false);
                 MainWindow.phonesButton();
             }
         });

@@ -130,10 +130,8 @@ public class ContactDetails
         cDialog.setVisible(true);
     }
 
-    private void setContactInfo(String link)
+    private void setContactInfo(final String link)
     {
-
-        final Integer userInfo = Telelistas.getUserID(link);
 
         // loading
         progress.setIndeterminate(true);
@@ -149,7 +147,7 @@ public class ContactDetails
             public ContactBean doInBackground()
             {
                 // this will be executed in background
-                ContactBean beanContact = Telelistas.getContactInfo(userInfo);
+                ContactBean beanContact = Telelistas.getContactInfo(link);
 
                 ContactDetails.this.contact = beanContact;
 
