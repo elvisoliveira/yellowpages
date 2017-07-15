@@ -135,11 +135,13 @@ public class MainWindow
         }
 
         // List Items
+        int i = 0;
         for (ContactBean contact : contactsList)
         {
 
-            System.out.println(contact.getLink());
-            // Telelistas.getContactInfo(contact.getLink())
+            ContactBean contactInfo = Telelistas.getContactInfo(contact.getLink());
+            contactsTable.setValueAt(contactInfo.getTelephone(), i, 2);
+            i++;
         }
 
     }
