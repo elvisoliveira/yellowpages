@@ -74,7 +74,7 @@ public class Telelistas
             String name = doc.select("h1.nome_anun").text();
 
             Elements phoneDOM = doc.select("div#anunciante div:nth-child(1)");
-            String phone = phoneDOM.text();
+            String phone = phoneDOM.text().replaceAll("Tel: ", "");
 
             for (Element e : phoneDOM.select("img"))
             {
