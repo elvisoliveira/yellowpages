@@ -129,9 +129,17 @@ public class MainWindow
             columns.add(contactsTable.getColumnName(i));
         }
 
-        if (!columns.contains("Telephone"))
+        String[] newColumns =
         {
-            contactsTable.addColumn("Telephone");
+            "Telephone", "Final"
+        };
+
+        for (String newColumnsName : newColumns)
+        {
+            if (!columns.contains(newColumnsName))
+            {
+                contactsTable.addColumn(newColumnsName);
+            }
         }
 
         // List Items
@@ -141,6 +149,7 @@ public class MainWindow
 
             ContactBean contactInfo = Telelistas.getContactInfo(contact.getLink());
             contactsTable.setValueAt(contactInfo.getTelephone(), i, 2);
+            contactsTable.setValueAt("<html><body><a href='file://" + contactInfo.getFinal() + "'>ok</a></body></html>", i, 3);
             i++;
         }
 
@@ -367,6 +376,7 @@ public class MainWindow
         }
         catch (IOException e)
         {
+            System.out.println(e.getMessage());
         }
         // Have to return something if everything fails
         return "Browser";

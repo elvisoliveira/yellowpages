@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,9 +65,6 @@ public class Telelistas
         try
         {
 
-            String currentfile = Telelistas.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-            String currentfolder = new File(currentfile).getParent();
-
             Document doc = Jsoup.connect(link).userAgent("Mozilla").get();
 
             String name = doc.select("h1.nome_anun").text();
@@ -76,12 +72,13 @@ public class Telelistas
             Elements phoneDOM = doc.select("div#anunciante div:nth-child(1)");
             String phone = phoneDOM.text().replaceAll("Tel: ", "");
 
+            String filePath = Telelistas.class.getResource(".").getFile() + phone.replaceAll("([^a-zA-Z0-9]|\\s)+","") + ":" + name.replaceAll("([^a-zA-Z]|\\s)+","") + ".gif";
             for (Element e : phoneDOM.select("img"))
             {
                 if (e.attr("src").toLowerCase().contains("imgfactory"))
                 {
                     Response resultImageResponse = Jsoup.connect(e.attr("src")).userAgent("Mozilla").ignoreContentType(true).execute();
-                    try (FileOutputStream out = new FileOutputStream(new File(currentfolder + "/" + name + ".gif")))
+                    try (FileOutputStream out = new FileOutputStream(new File(filePath)))
                     {
                         out.write(resultImageResponse.bodyAsBytes());
                     }
@@ -96,12 +93,13 @@ public class Telelistas
             contact.setAddress(address);
             contact.setLink(link);
             contact.setName(name);
+            contact.setFinal(filePath);
             contact.setTelephone(phone);
 
             return contact;
 
         }
-        catch (IOException | URISyntaxException ex)
+        catch (IOException ex)
         {
             Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);
         }

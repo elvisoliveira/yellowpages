@@ -6,6 +6,7 @@ public class ContactBean
     private String Name;
     private String Address;
     private String Link;
+    private String FinalString;
     private String Telephone;
     private String Id;
 
@@ -29,6 +30,14 @@ public class ContactBean
         this.Address = Address.trim();
     }
 
+    public void setFinal(String FinalString)
+    {
+        this.FinalString = FinalString.trim();
+    }
+    public String getFinal()
+    {
+        return FinalString;
+    }
     public String getLink()
     {
         return Link.replace(String.valueOf((char) 160), " ").trim();
