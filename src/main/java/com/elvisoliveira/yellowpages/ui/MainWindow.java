@@ -4,10 +4,12 @@ import com.elvisoliveira.yellowpages.beans.ContactBean;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,6 +20,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,6 +34,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.jsoup.nodes.Document;
@@ -43,6 +49,7 @@ public class MainWindow
     private static JTextField searchInput;
     private static JButton searchButton;
     private static JButton phonesButton;
+    private static JButton digitsButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
 
@@ -89,6 +96,18 @@ public class MainWindow
             }
         });
 
+        // Get last two digits.
+        digitsButton = new JButton();
+        digitsButton.setText("X");
+        digitsButton.setEnabled(false);
+        digitsButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                digitsButton.setEnabled(false);
+            }
+        });
         // in the beginning of the execution
         // the name is not set, give the user instructions to search
         // set the widget dimentions, required to define layout properties
@@ -103,16 +122,17 @@ public class MainWindow
 
         // layout configuration        
         panel.setLayout(new MigLayout(""));
-        panel.add(searchInput, "grow, split 3");
+        panel.add(searchInput, "grow, split 4");
         panel.add(searchButton);
-        panel.add(phonesButton, "wrap");
+        panel.add(phonesButton);
+        panel.add(digitsButton, "wrap");
         panel.add(contactsListing, "wrap");
         panel.add(progress, "growx, wrap");
 
         // window configuration
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        window.setJMenuBar(MainMenu.getMenu());
+        // window.setJMenuBar(MainMenu.getMenu());
         window.setResizable(false);
         window.setVisible(true);
         window.pack();
@@ -149,10 +169,14 @@ public class MainWindow
 
             ContactBean contactInfo = Telelistas.getContactInfo(contact.getLink());
             contactsTable.setValueAt(contactInfo.getTelephone(), i, 2);
-            contactsTable.setValueAt("<html><body><a href='file://" + contactInfo.getFinal() + "'>ok</a></body></html>", i, 3);
+            contactsTable.setValueAt(contactInfo.getFinal(), i, 3);
             i++;
         }
 
+        // Hide column Final.
+        table.getColumnModel().getColumn(3).setMinWidth(0);
+        table.getColumnModel().getColumn(3).setMaxWidth(0);
+        table.getColumnModel().getColumn(3).setWidth(0);
     }
 
     public static void searchButton()
@@ -241,6 +265,28 @@ public class MainWindow
                 // public void mousePressed(MouseEvent me) {
                 //     selectContact(contactsArray.get(table.getSelectedRow()));
                 // }
+            });
+            table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
+            {
+                @Override
+                public void valueChanged(ListSelectionEvent e)
+                {
+                    if (table.getColumnCount() >= 3)
+                    {
+                        try
+                        {
+                            String digits = table.getValueAt(table.getSelectedRow(), 3).toString();
+                            Image img = ImageIO.read(new File(digits));
+                            digitsButton.setText("");
+                            digitsButton.setIcon(new ImageIcon(img));
+                        }
+                        catch (IOException ex)
+                        {
+                            Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                    }
+                }
             });
 
             contactsListing.setViewportView(table);
