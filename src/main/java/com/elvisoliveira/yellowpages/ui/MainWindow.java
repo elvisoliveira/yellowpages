@@ -244,18 +244,11 @@ public class MainWindow
                 @Override
                 public void mouseReleased(MouseEvent event)
                 {
-                    Integer row = table.getSelectedRow();
-                    //
-                    if (row > 0)
+                    if (table.getSelectedRow() >= 0)
                     {
-                        MainWindow.selectContact(event, contactsList.get(row));
+                        MainWindow.selectContact(event, contactsList.get(table.getSelectedRow()));
                     }
                 }
-                // normal click
-                // @Override
-                // public void mousePressed(MouseEvent me) {
-                //     selectContact(contactsArray.get(table.getSelectedRow()));
-                // }
             });
             table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
             {
@@ -294,7 +287,7 @@ public class MainWindow
 
         Integer operation = (iterator) ? 1 : -1;
 
-        Integer selected = table.getSelectedRow() + operation;
+        Integer selected = table.getRowCount() > 1 || table.getRowCount() != table.getSelectedRow() ? table.getSelectedRow() + operation : table.getSelectedRow();
 
         table.setRowSelectionInterval(selected, selected);
 
