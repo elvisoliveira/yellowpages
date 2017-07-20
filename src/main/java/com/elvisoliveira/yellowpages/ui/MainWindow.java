@@ -100,14 +100,6 @@ public class MainWindow
         digitsButton = new JButton();
         digitsButton.setText("X");
         digitsButton.setEnabled(false);
-        digitsButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                digitsButton.setEnabled(false);
-            }
-        });
         // in the beginning of the execution
         // the name is not set, give the user instructions to search
         // set the widget dimentions, required to define layout properties
@@ -228,7 +220,7 @@ public class MainWindow
                 @Override
                 public boolean isCellEditable(int row, int column)
                 {
-                    return false;
+                    return column == 2;
                 }
             };
             contactsTable.addColumn("Name");

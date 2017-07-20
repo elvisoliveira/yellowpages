@@ -50,7 +50,7 @@ public class ContactBean
 
     public String getTelephone()
     {
-        return Telephone;
+        return Telephone.trim();
     }
 
     public void setTelephone(String Telephone)
