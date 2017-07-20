@@ -124,7 +124,6 @@ public class MainWindow
         // window configuration
         window.add(panel);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // window.setJMenuBar(MainMenu.getMenu());
         window.setResizable(false);
         window.setVisible(true);
         window.pack();
