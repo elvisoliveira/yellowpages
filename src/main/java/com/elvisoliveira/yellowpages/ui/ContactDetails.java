@@ -1,6 +1,5 @@
 package com.elvisoliveira.yellowpages.ui;
 
-import com.elvisoliveira.yellowpages.DAO.ContactModel;
 import com.elvisoliveira.yellowpages.beans.ContactBean;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Dimension;
@@ -30,7 +29,6 @@ public class ContactDetails
 
     private static JButton nButton;
     private static JButton pButton;
-    private static JButton iButton;
 
     private static final JProgressBar progress = new JProgressBar();
     private static final JTextField name = new JTextField();
@@ -89,25 +87,10 @@ public class ContactDetails
             }
         });
 
-        iButton = new JButton();
-        iButton.setText("Insert");
-        iButton.addActionListener(new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
-            {
-
-                ContactModel contactm = new ContactModel();
-
-                Boolean teste = contactm.setContact(contact);
-            }
-        });
-
         aPanel = new JPanel();
-        aPanel.setLayout(new MigLayout("inset 0", "[grow][][]", "[]"));
-        aPanel.add(iButton, "cell 0 0");
-        aPanel.add(pButton, "cell 1 0");
-        aPanel.add(nButton, "cell 2 0");
+        aPanel.setLayout(new MigLayout("inset 0", "[grow][]", "[]"));
+        aPanel.add(pButton, "cell 0 0");
+        aPanel.add(nButton, "cell 1 0");
 
         cPanel = new JPanel();
         cPanel.setLayout(new MigLayout("inset 0", "[][grow]", "[][][][grow]"));
@@ -137,7 +120,6 @@ public class ContactDetails
         progress.setIndeterminate(true);
 
         // disable all actions
-        iButton.setEnabled(false);
         pButton.setEnabled(false);
         nButton.setEnabled(false);
 
@@ -159,7 +141,6 @@ public class ContactDetails
                 progress.setIndeterminate(false);
 
                 // enable all actions
-                iButton.setEnabled(true);
                 pButton.setEnabled(true);
                 nButton.setEnabled(true);
 
