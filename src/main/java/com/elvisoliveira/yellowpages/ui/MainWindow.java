@@ -287,7 +287,12 @@ public class MainWindow
 
         Integer operation = (iterator) ? 1 : -1;
 
-        Integer selected = table.getRowCount() > 1 || table.getRowCount() != table.getSelectedRow() ? table.getSelectedRow() + operation : table.getSelectedRow();
+        Integer selected = table.getSelectedRow() + operation;
+
+        if (selected < 0 || selected == table.getRowCount())
+        {
+            selected = table.getSelectedRow();
+        }
 
         table.setRowSelectionInterval(selected, selected);
 
