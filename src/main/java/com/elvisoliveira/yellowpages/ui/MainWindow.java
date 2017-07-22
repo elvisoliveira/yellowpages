@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -49,6 +50,8 @@ public class MainWindow
     private static JTextField searchInput;
     private static JButton searchButton;
     private static JButton phonesButton;
+    private static JComboBox statesList;
+    private static JComboBox cityList;
     private static JButton digitsButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
@@ -69,10 +72,14 @@ public class MainWindow
                 MainWindow.searchButton();
             }
         });
+        
+        Dimension size = new Dimension();
+        size.height = 25;
 
         // search button
         searchButton = new JButton();
         searchButton.setText("Search");
+        searchButton.setPreferredSize(size);
         searchButton.addActionListener(new ActionListener()
         {
             @Override
@@ -85,6 +92,7 @@ public class MainWindow
         // Get phone numbers.
         phonesButton = new JButton();
         phonesButton.setText("Get Phones");
+        phonesButton.setPreferredSize(size);
         phonesButton.setEnabled(false);
         phonesButton.addActionListener(new ActionListener()
         {
@@ -96,10 +104,44 @@ public class MainWindow
             }
         });
 
+        // States.
+        String[] states =
+        {
+            "BR", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"
+        };
+        statesList = new JComboBox(states);
+        statesList.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println(statesList.getSelectedItem());
+            }
+        });
+        
+        // States.
+        String[] cities =
+        {
+            "City"
+        };
+        cityList = new JComboBox(cities);
+        cityList.addActionListener(new ActionListener()
+        {
+
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                System.out.println(statesList.getSelectedItem());
+            }
+        });
+
         // Get last two digits.
         digitsButton = new JButton();
         digitsButton.setText("X");
         digitsButton.setEnabled(false);
+        digitsButton.setPreferredSize(size);
+
         // in the beginning of the execution
         // the name is not set, give the user instructions to search
         // set the widget dimentions, required to define layout properties
@@ -114,9 +156,11 @@ public class MainWindow
 
         // layout configuration        
         panel.setLayout(new MigLayout(""));
-        panel.add(searchInput, "grow, split 4");
-        panel.add(searchButton);
-        panel.add(phonesButton);
+        panel.add(searchInput, "grow, split 7");
+        panel.add(statesList, "growy");
+        panel.add(cityList, "growy, wrap");
+        panel.add(searchButton, "grow, split 3");
+        panel.add(phonesButton, "grow");
         panel.add(digitsButton, "wrap");
         panel.add(contactsListing, "wrap");
         panel.add(progress, "growx, wrap");
