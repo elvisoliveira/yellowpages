@@ -17,13 +17,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Telelistas
-{
+public class Telelistas {
 
     private static String[] tokens;
 
-    public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException
-    {
+    public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException {
 
         String name = URLEncoder.encode(initName, "ISO-8859-1");
 
@@ -34,8 +32,7 @@ public class Telelistas
         return doc;
     }
 
-    public static Integer totalContacts(Document doc)
-    {
+    public static Integer totalContacts(Document doc) {
 
         Elements contacts = doc.select("div#Content_Regs > table");
 
@@ -43,8 +40,7 @@ public class Telelistas
 
     }
 
-    public static ArrayList<LocationBean> getCities(String state)
-    {
+    public static ArrayList<LocationBean> getCities(String state) {
         ArrayList<LocationBean> cities = new ArrayList<>();
         try {
             cities.add(Telelistas.setLocation(0, "Select the City"));
@@ -67,6 +63,7 @@ public class Telelistas
         }
         return cities;
     }
+
     public static LocationBean setLocation(Integer id, String name) {
         LocationBean mockLocation = new LocationBean();
         mockLocation.setLocationID(id);
@@ -74,16 +71,14 @@ public class Telelistas
 
         return mockLocation;
     }
-    public static Integer getUserID(String url)
-    {
+
+    public static Integer getUserID(String url) {
         // get the tokens retuned of string
         tokens = url.split("/");
 
-        for (String string : tokens)
-        {
+        for (String string : tokens) {
             // find ont token that has only numbers
-            if (string.matches("[-+]?\\d*\\.?\\d+"))
-            {
+            if (string.matches("[-+]?\\d*\\.?\\d+")) {
                 // define as contact ID (of telelistas)
                 return Integer.parseInt(string);
             }
@@ -91,11 +86,9 @@ public class Telelistas
         return null;
     }
 
-    public static ContactBean getContactInfo(String link)
-    {
+    public static ContactBean getContactInfo(String link) {
 
-        try
-        {
+        try {
 
             Document doc = Jsoup.connect(link).userAgent("Mozilla").get();
 
@@ -104,14 +97,11 @@ public class Telelistas
             Elements phoneDOM = doc.select("div#anunciante div:nth-child(1)");
             String phone = phoneDOM.text().replaceAll("Tel: ", "");
 
-            String filePath = Telelistas.class.getResource(".").getFile() + phone.replaceAll("([^a-zA-Z0-9]|\\s)+","") + ":" + name.replaceAll("([^a-zA-Z]|\\s)+","") + ".gif";
-            for (Element e : phoneDOM.select("img"))
-            {
-                if (e.attr("src").toLowerCase().contains("imgfactory"))
-                {
+            String filePath = Telelistas.class.getResource(".").getFile() + phone.replaceAll("([^a-zA-Z0-9]|\\s)+", "") + ":" + name.replaceAll("([^a-zA-Z]|\\s)+", "") + ".gif";
+            for (Element e : phoneDOM.select("img")) {
+                if (e.attr("src").toLowerCase().contains("imgfactory")) {
                     Response resultImageResponse = Jsoup.connect(e.attr("src")).userAgent("Mozilla").ignoreContentType(true).execute();
-                    try (FileOutputStream out = new FileOutputStream(new File(filePath)))
-                    {
+                    try (FileOutputStream out = new FileOutputStream(new File(filePath))) {
                         out.write(resultImageResponse.bodyAsBytes());
                     }
                 }
@@ -130,9 +120,7 @@ public class Telelistas
 
             return contact;
 
-        }
-        catch (IOException ex)
-        {
+        } catch (IOException ex) {
             Logger.getLogger(Telelistas.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -140,15 +128,13 @@ public class Telelistas
 
     }
 
-    public static List<ContactBean> telelistas(Document doc)
-    {
+    public static List<ContactBean> telelistas(Document doc) {
 
         List<ContactBean> contactsList = new ArrayList();
 
         Elements contacts = doc.select("div#Content_Regs > table:not([bgcolor])");
 
-        for (Element contact : contacts)
-        {
+        for (Element contact : contacts) {
             // get information string
             String contactName = contact.select("td.text_resultado_ib > a").text();
             String contactAddress = contact.select("td.text_endereco_ib").text();

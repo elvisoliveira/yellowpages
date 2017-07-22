@@ -17,8 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 
-public class ContactDetails
-{
+public class ContactDetails {
 
     // contact information panel    
     private final JDialog cDialog;
@@ -35,8 +34,7 @@ public class ContactDetails
     private static final JTextField address = new JTextField();
     private static final JTextField telephone = new JTextField();
 
-    public ContactDetails(JFrame window)
-    {
+    public ContactDetails(JFrame window) {
         // setup jdialog
         cDialog = new JDialog(window, "", true);
 
@@ -50,8 +48,7 @@ public class ContactDetails
         cDialog.setLayout(new MigLayout("", "[grow, fill]"));
     }
 
-    public void setContactInfo(ContactBean info, final List<ContactBean> contacts)
-    {
+    public void setContactInfo(ContactBean info, final List<ContactBean> contacts) {
 
         this.contact = info;
 
@@ -61,11 +58,9 @@ public class ContactDetails
 
         nButton = new JButton();
         nButton.setText("Next");
-        nButton.addActionListener(new ActionListener()
-        {
+        nButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Integer target = MainWindow.changeContacts(Boolean.TRUE);
                 String contactLink = contacts.get(target).getLink();
 
@@ -75,11 +70,9 @@ public class ContactDetails
 
         pButton = new JButton();
         pButton.setText("Previous");
-        pButton.addActionListener(new ActionListener()
-        {
+        pButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 Integer target = MainWindow.changeContacts(Boolean.FALSE);
                 String contactLink = contacts.get(target).getLink();
 
@@ -113,8 +106,7 @@ public class ContactDetails
         cDialog.setVisible(true);
     }
 
-    private void setContactInfo(final String link)
-    {
+    private void setContactInfo(final String link) {
 
         // loading
         progress.setIndeterminate(true);
@@ -123,11 +115,9 @@ public class ContactDetails
         pButton.setEnabled(false);
         nButton.setEnabled(false);
 
-        SwingWorker<ContactBean, Void> swingWorker = new SwingWorker<ContactBean, Void>()
-        {
+        SwingWorker<ContactBean, Void> swingWorker = new SwingWorker<ContactBean, Void>() {
             @Override
-            public ContactBean doInBackground()
-            {
+            public ContactBean doInBackground() {
                 // this will be executed in background
                 ContactBean beanContact = Telelistas.getContactInfo(link);
 

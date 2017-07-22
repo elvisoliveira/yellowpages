@@ -1,7 +1,6 @@
 package com.elvisoliveira.yellowpages.beans;
 
-public class ContactBean
-{
+public class ContactBean {
 
     private String Name;
     private String Address;
@@ -10,61 +9,51 @@ public class ContactBean
     private String Telephone;
     private String Id;
 
-    public String getName()
-    {
+    public String getName() {
         return Name.replace(String.valueOf((char) 160), " ").trim();
     }
 
-    public void setName(String Name)
-    {
+    public void setName(String Name) {
         this.Name = Name.trim();
     }
 
-    public String getAddress()
-    {
+    public String getAddress() {
         return Address.replace(String.valueOf((char) 160), " ").trim();
     }
 
-    public void setAddress(String Address)
-    {
+    public void setAddress(String Address) {
         this.Address = Address.trim();
     }
 
-    public void setFinal(String FinalString)
-    {
+    public void setFinal(String FinalString) {
         this.FinalString = FinalString.trim();
     }
-    public String getFinal()
-    {
+
+    public String getFinal() {
         return FinalString;
     }
-    public String getLink()
-    {
+
+    public String getLink() {
         return Link.replace(String.valueOf((char) 160), " ").trim();
     }
 
-    public void setLink(String Link)
-    {
+    public void setLink(String Link) {
         this.Link = Link.trim();
     }
 
-    public String getTelephone()
-    {
+    public String getTelephone() {
         return Telephone.trim();
     }
 
-    public void setTelephone(String Telephone)
-    {
+    public void setTelephone(String Telephone) {
         this.Telephone = Telephone;
     }
 
-    public String getId()
-    {
+    public String getId() {
         return Id;
     }
 
-    public void setId(String Id)
-    {
+    public void setId(String Id) {
         this.Id = Id;
     }
 

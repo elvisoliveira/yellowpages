@@ -11,16 +11,14 @@ import javax.swing.JSplitPane;
 import javax.swing.border.EtchedBorder;
 import net.miginfocom.swing.MigLayout;
 
-public class ContactListing
-{
+public class ContactListing {
 
     private final JDialog cDialog;
 
     private final JScrollPane listContacts;
     private final JScrollPane listNames;
 
-    public ContactListing(JFrame window)
-    {
+    public ContactListing(JFrame window) {
         // setup jdialog
         cDialog = new JDialog(window, "", true);
 

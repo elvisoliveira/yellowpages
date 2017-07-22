@@ -42,8 +42,7 @@ import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
 import org.jsoup.nodes.Document;
 
-public class MainWindow
-{
+public class MainWindow {
 
     private static JScrollPane contactsListing;
     private static JTable table;
@@ -60,20 +59,17 @@ public class MainWindow
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
 
-    public static void MainWindow(String name) throws IOException
-    {
+    public static void MainWindow(String name) throws IOException {
 
         // serach field
         searchInput = new JTextField();
-        searchInput.addActionListener(new ActionListener()
-        {
+        searchInput.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 MainWindow.searchButton();
             }
         });
-        
+
         Dimension size = new Dimension();
         size.height = 25;
 
@@ -81,11 +77,9 @@ public class MainWindow
         searchButton = new JButton();
         searchButton.setText("Search");
         searchButton.setPreferredSize(size);
-        searchButton.addActionListener(new ActionListener()
-        {
+        searchButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 MainWindow.searchButton();
             }
         });
@@ -95,28 +89,23 @@ public class MainWindow
         phonesButton.setText("Get Phones");
         phonesButton.setPreferredSize(size);
         phonesButton.setEnabled(false);
-        phonesButton.addActionListener(new ActionListener()
-        {
+        phonesButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 phonesButton.setEnabled(false);
                 MainWindow.phonesButton();
             }
         });
 
         // States.
-        String[] states =
-        {
+        String[] states = {
             "BR", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"
         };
         statesList = new JComboBox(states);
-        statesList.addActionListener(new ActionListener()
-        {
+        statesList.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 String state = (String) statesList.getSelectedItem();
                 if (!"BR".equals(state)) {
                     ArrayList cities = Telelistas.getCities(state);
@@ -132,17 +121,15 @@ public class MainWindow
                 }
             }
         });
-        
+
         // Cities.
         cityList = new JComboBox<>();
         cityList.addItem(Telelistas.setLocation(0, "Select the City"));
         cityList.setEnabled(false);
-        cityList.addActionListener(new ActionListener()
-        {
+        cityList.addActionListener(new ActionListener() {
 
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
                 System.out.println(statesList.getSelectedItem());
             }
         });
@@ -184,34 +171,28 @@ public class MainWindow
         window.pack();
     }
 
-    public static void phonesButton()
-    {
+    public static void phonesButton() {
 
         // Add Column
         List<String> columns = new ArrayList<>();
 
-        for (int i = 0; i < contactsTable.getColumnCount(); i++)
-        {
+        for (int i = 0; i < contactsTable.getColumnCount(); i++) {
             columns.add(contactsTable.getColumnName(i));
         }
 
-        String[] newColumns =
-        {
+        String[] newColumns = {
             "Telephone", "Final"
         };
 
-        for (String newColumnsName : newColumns)
-        {
-            if (!columns.contains(newColumnsName))
-            {
+        for (String newColumnsName : newColumns) {
+            if (!columns.contains(newColumnsName)) {
                 contactsTable.addColumn(newColumnsName);
             }
         }
 
         // List Items
         int i = 0;
-        for (ContactBean contact : contactsList)
-        {
+        for (ContactBean contact : contactsList) {
 
             ContactBean contactInfo = Telelistas.getContactInfo(contact.getLink());
             contactsTable.setValueAt(contactInfo.getTelephone(), i, 2);
@@ -225,18 +206,15 @@ public class MainWindow
         table.getColumnModel().getColumn(3).setWidth(0);
     }
 
-    public static void searchButton()
-    {
+    public static void searchButton() {
         // loading
         progress.setIndeterminate(true);
 
         final String name = searchInput.getText();
 
-        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>()
-        {
+        SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
             @Override
-            public Void doInBackground() throws IOException
-            {
+            public Void doInBackground() throws IOException {
 
                 // this will be executed in background
                 MainWindow.changeContacts(name);
@@ -248,8 +226,7 @@ public class MainWindow
         swingWorker.execute();
     }
 
-    private static void changeContacts(String name) throws IOException
-    {
+    private static void changeContacts(String name) throws IOException {
 
         // make the request and return the Document
         Document document = Telelistas.generateDocument(name);
@@ -258,22 +235,17 @@ public class MainWindow
         Integer total = Telelistas.totalContacts(document);
 
         // if the total of returned contacts are zero, feedback one messange
-        if (total.equals(0))
-        {
+        if (total.equals(0)) {
             phonesButton.setEnabled(false);
 
             contactsListing.setViewportView(new JLabel("no contacts with this name", JLabel.CENTER));
-        }
-        // if the total of returned contacts are greater than zero, return them
-        else
-        {
+        } // if the total of returned contacts are greater than zero, return them
+        else {
             phonesButton.setEnabled(true);
 
-            contactsTable = new DefaultTableModel()
-            {
+            contactsTable = new DefaultTableModel() {
                 @Override
-                public boolean isCellEditable(int row, int column)
-                {
+                public boolean isCellEditable(int row, int column) {
                     return column == 2;
                 }
             };
@@ -282,10 +254,8 @@ public class MainWindow
 
             contactsList = Telelistas.telelistas(document);
 
-            for (ContactBean object : contactsList)
-            {
-                contactsTable.addRow(new Object[]
-                {
+            for (ContactBean object : contactsList) {
+                contactsTable.addRow(new Object[]{
                     object.getName(), object.getAddress().trim()
                 });
             }
@@ -293,34 +263,25 @@ public class MainWindow
             table = new JTable();
             table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             table.setModel(contactsTable);
-            table.addMouseListener(new MouseAdapter()
-            {
+            table.addMouseListener(new MouseAdapter() {
                 // right click
                 @Override
-                public void mouseReleased(MouseEvent event)
-                {
-                    if (table.getSelectedRow() >= 0)
-                    {
+                public void mouseReleased(MouseEvent event) {
+                    if (table.getSelectedRow() >= 0) {
                         MainWindow.selectContact(event, contactsList.get(table.getSelectedRow()));
                     }
                 }
             });
-            table.getSelectionModel().addListSelectionListener(new ListSelectionListener()
-            {
+            table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
                 @Override
-                public void valueChanged(ListSelectionEvent e)
-                {
-                    if (table.getColumnCount() >= 3)
-                    {
-                        try
-                        {
+                public void valueChanged(ListSelectionEvent e) {
+                    if (table.getColumnCount() >= 3) {
+                        try {
                             String digits = table.getValueAt(table.getSelectedRow(), 3).toString();
                             Image img = ImageIO.read(new File(digits));
                             digitsButton.setText("");
                             digitsButton.setIcon(new ImageIcon(img));
-                        }
-                        catch (IOException ex)
-                        {
+                        } catch (IOException ex) {
                             Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
@@ -337,15 +298,13 @@ public class MainWindow
 
     }
 
-    public static Integer changeContacts(Boolean iterator)
-    {
+    public static Integer changeContacts(Boolean iterator) {
 
         Integer operation = (iterator) ? 1 : -1;
 
         Integer selected = table.getSelectedRow() + operation;
 
-        if (selected < 0 || selected == table.getRowCount())
-        {
+        if (selected < 0 || selected == table.getRowCount()) {
             selected = table.getSelectedRow();
         }
 
@@ -355,8 +314,7 @@ public class MainWindow
 
     }
 
-    public static void selectContact(MouseEvent event, final ContactBean info)
-    {
+    public static void selectContact(MouseEvent event, final ContactBean info) {
 
         JTable source = (JTable) event.getSource();
 
@@ -366,20 +324,16 @@ public class MainWindow
         final JPopupMenu popupMenu = new JPopupMenu();
 
         // details buttom
-        itemDetails.addActionListener(new ActionListener()
-        {
+        itemDetails.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
+            public void actionPerformed(ActionEvent e) {
 
                 // loading
                 progress.setIndeterminate(true);
 
-                SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>()
-                {
+                SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
                     @Override
-                    public Void doInBackground() throws IOException
-                    {
+                    public Void doInBackground() throws IOException {
                         // loading
                         progress.setIndeterminate(false);
 
@@ -400,17 +354,12 @@ public class MainWindow
 
         // browser buttom
         // @TODO: Change {Default Browser} for the name of the user default browser
-        itemBrowser.addActionListener(new ActionListener()
-        {
+        itemBrowser.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e)
-            {
-                try
-                {
+            public void actionPerformed(ActionEvent e) {
+                try {
                     Desktop.getDesktop().browse(new URI((String) info.getLink()));
-                }
-                catch (URISyntaxException | IOException ex)
-                {
+                } catch (URISyntaxException | IOException ex) {
                     Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -420,14 +369,12 @@ public class MainWindow
         popupMenu.add(itemDetails);
         popupMenu.add(itemBrowser);
 
-        if (event.isPopupTrigger())
-        {
+        if (event.isPopupTrigger()) {
 
             int row = source.rowAtPoint(event.getPoint());
             int column = source.columnAtPoint(event.getPoint());
 
-            if (!source.isRowSelected(row))
-            {
+            if (!source.isRowSelected(row)) {
                 source.changeSelection(row, column, false, false);
             }
 
@@ -436,23 +383,18 @@ public class MainWindow
 
     }
 
-    public static String getDefaultBrowser()
-    {
-        try
-        {
+    public static String getDefaultBrowser() {
+        try {
             // Get registry where we find the default browser
             Process process = Runtime.getRuntime().exec("REG QUERY HKEY_CLASSES_ROOT\\http\\shell\\open\\command");
-            try (Scanner kb = new Scanner(process.getInputStream()))
-            {
-                while (kb.hasNextLine())
-                {
+            try (Scanner kb = new Scanner(process.getInputStream())) {
+                while (kb.hasNextLine()) {
                     // Get output from the terminal, and replace all '\' with '/' (makes regex a bit more manageable)
                     String registry = (kb.nextLine()).replaceAll("\\\\", "/").trim();
 
                     // Extract the default browser
                     Matcher matcher = Pattern.compile("/(?=[^/]*$)(.+?)[.]").matcher(registry);
-                    if (matcher.find())
-                    {
+                    if (matcher.find()) {
                         // Scanner is no longer needed if match is found, so close it
                         kb.close();
                         String defaultBrowser = matcher.group(1);
@@ -463,9 +405,7 @@ public class MainWindow
                     }
                 }
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
         // Have to return something if everything fails
