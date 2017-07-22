@@ -1,6 +1,7 @@
 package com.elvisoliveira.yellowpages.webservice;
 
 import com.elvisoliveira.yellowpages.beans.ContactBean;
+import com.elvisoliveira.yellowpages.beans.LocationBean;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,6 +43,37 @@ public class Telelistas
 
     }
 
+    public static ArrayList<LocationBean> getCities(String state)
+    {
+        ArrayList<LocationBean> cities = new ArrayList<>();
+        try {
+            cities.add(Telelistas.setLocation(0, "Select the City"));
+            Document doc = Jsoup.connect("https://www.telelistas.net/AjaxHandler.ashx")
+                    .data("state", state.toLowerCase())
+                    .data("style", "busca_interna")
+                    .data("selectedCity", "")
+                    .data("clientId", "pch_localidade_select")
+                    .data("method", "GetSearchCitiesNamed")
+                    .userAgent("Mozilla")
+                    .post();
+
+            for (Element e : doc.select("option")) {
+                if (!e.attr("value").isEmpty()) {
+                    cities.add(Telelistas.setLocation(Integer.parseInt(e.attr("value")), e.text()));
+                }
+            }
+        } catch (IOException ex) {
+            cities.add(Telelistas.setLocation(0, "Could not retrieve data: " + ex.getMessage()));
+        }
+        return cities;
+    }
+    public static LocationBean setLocation(Integer id, String name) {
+        LocationBean mockLocation = new LocationBean();
+        mockLocation.setLocationID(id);
+        mockLocation.setLocationName(name);
+
+        return mockLocation;
+    }
     public static Integer getUserID(String url)
     {
         // get the tokens retuned of string

@@ -1,6 +1,7 @@
 package com.elvisoliveira.yellowpages.ui;
 
 import com.elvisoliveira.yellowpages.beans.ContactBean;
+import com.elvisoliveira.yellowpages.beans.LocationBean;
 import com.elvisoliveira.yellowpages.webservice.Telelistas;
 import java.awt.Desktop;
 import java.awt.Dimension;
@@ -51,7 +52,7 @@ public class MainWindow
     private static JButton searchButton;
     private static JButton phonesButton;
     private static JComboBox statesList;
-    private static JComboBox cityList;
+    private static JComboBox<LocationBean> cityList;
     private static JButton digitsButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
@@ -116,16 +117,26 @@ public class MainWindow
             @Override
             public void actionPerformed(ActionEvent e)
             {
-                System.out.println(statesList.getSelectedItem());
+                String state = (String) statesList.getSelectedItem();
+                if (!"BR".equals(state)) {
+                    ArrayList cities = Telelistas.getCities(state);
+                    cityList.setEnabled(true);
+                    cityList.removeAllItems();
+                    for (int i = 0; i < cities.size(); i++) {
+                        cityList.addItem((LocationBean) cities.get(i));
+                    }
+                } else {
+                    cityList.setEnabled(false);
+                    cityList.removeAllItems();
+                    cityList.addItem(Telelistas.setLocation(0, "Select the City"));
+                }
             }
         });
         
-        // States.
-        String[] cities =
-        {
-            "City"
-        };
-        cityList = new JComboBox(cities);
+        // Cities.
+        cityList = new JComboBox<>();
+        cityList.addItem(Telelistas.setLocation(0, "Select the City"));
+        cityList.setEnabled(false);
         cityList.addActionListener(new ActionListener()
         {
 
