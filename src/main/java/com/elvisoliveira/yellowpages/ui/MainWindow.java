@@ -99,33 +99,36 @@ public class MainWindow {
 
         // States.
         String[] states = {
-            "BR", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO", "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ", "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"
+            "BR", "AC", "AL", "AM", "AP", "BA", "CE", "DF", "ES", "GO",
+            "MA", "MG", "MS", "MT", "PA", "PB", "PE", "PI", "PR", "RJ",
+            "RN", "RO", "RR", "RS", "SC", "SE", "SP", "TO"
         };
         statesList = new JComboBox(states);
         statesList.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String state = (String) statesList.getSelectedItem();
+                final String state = (String) statesList.getSelectedItem();
                 if (!"BR".equals(state)) {
-                    ArrayList cities = Telelistas.getCities(state);
-                    cityList.setEnabled(true);
-                    cityList.removeAllItems();
-                    for (int i = 0; i < cities.size(); i++) {
-                        cityList.addItem((LocationBean) cities.get(i));
-                    }
+                    progress.setIndeterminate(true);
+                    SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+                        @Override
+                        public Void doInBackground() throws IOException {
+                            ArrayList cities = Telelistas.getCities(state);
+                            setCity(true, cities);
+                            progress.setIndeterminate(false);
+                            return null;
+                        }
+                    };
+                    swingWorker.execute();
                 } else {
-                    cityList.setEnabled(false);
-                    cityList.removeAllItems();
-                    cityList.addItem(Telelistas.setLocation(0, "Select the City"));
+                    setCity(false, null);
                 }
             }
         });
 
         // Cities.
         cityList = new JComboBox<>();
-        cityList.addItem(Telelistas.setLocation(0, "Select the City"));
-        cityList.setEnabled(false);
         cityList.addActionListener(new ActionListener() {
 
             @Override
@@ -133,6 +136,7 @@ public class MainWindow {
                 System.out.println(statesList.getSelectedItem());
             }
         });
+        setCity(false, null);
 
         // Get last two digits.
         digitsButton = new JButton();
@@ -171,6 +175,17 @@ public class MainWindow {
         window.pack();
     }
 
+    private static void setCity(Boolean enabled, ArrayList cities) {
+        cityList.setEnabled(enabled);
+        cityList.removeAllItems();
+        if (enabled) {
+            for (int i = 0; i < cities.size(); i++) {
+                cityList.addItem((LocationBean) cities.get(i));
+            }
+        } else {
+            cityList.addItem(Telelistas.setLocation(0, "Select the City"));
+        }
+    }
     public static void phonesButton() {
 
         // Add Column
