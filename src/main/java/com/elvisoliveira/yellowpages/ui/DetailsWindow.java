@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import net.miginfocom.swing.MigLayout;
 
-public class ContactDetails {
+public class DetailsWindow {
 
     // contact information panel    
     private final JDialog cDialog;
@@ -34,7 +34,7 @@ public class ContactDetails {
     private static final JTextField address = new JTextField();
     private static final JTextField telephone = new JTextField();
 
-    public ContactDetails(JFrame window) {
+    public DetailsWindow(JFrame window) {
         // setup jdialog
         cDialog = new JDialog(window, "", true);
 
@@ -64,7 +64,7 @@ public class ContactDetails {
                 Integer target = MainWindow.changeContacts(Boolean.TRUE);
                 String contactLink = contacts.get(target).getLink();
 
-                ContactDetails.this.setContactInfo(contactLink);
+                DetailsWindow.this.setContactInfo(contactLink);
             }
         });
 
@@ -76,7 +76,7 @@ public class ContactDetails {
                 Integer target = MainWindow.changeContacts(Boolean.FALSE);
                 String contactLink = contacts.get(target).getLink();
 
-                ContactDetails.this.setContactInfo(contactLink);
+                DetailsWindow.this.setContactInfo(contactLink);
             }
         });
 
@@ -121,7 +121,7 @@ public class ContactDetails {
                 // this will be executed in background
                 ContactBean beanContact = Telelistas.getContactInfo(link);
 
-                ContactDetails.this.contact = beanContact;
+                DetailsWindow.this.contact = beanContact;
 
                 name.setText(beanContact.getName());
                 address.setText(beanContact.getAddress());

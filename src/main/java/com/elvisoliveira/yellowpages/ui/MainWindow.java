@@ -52,12 +52,12 @@ public class MainWindow {
     private static JButton phonesButton;
     private static JComboBox statesList;
     private static JComboBox<LocationBean> cityList;
-    private static JComboBox<LocationBean> neighbourhoodList;
+    private static JComboBox<LocationBean> nbList;
     private static JButton digitsButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
     private static ActionListener cityListener;
-    private static ActionListener neighbourhoodListener;
+    private static ActionListener nbListener;
     private static ArrayList<LocationBean> neighbourhood;
     private static ArrayList<LocationBean> cities;
 
@@ -110,18 +110,20 @@ public class MainWindow {
         };
         statesList = new JComboBox(states);
         statesList.addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 final String state = (String) statesList.getSelectedItem();
                 if (!"BR".equals(state)) {
                     progress.setIndeterminate(true);
+                    cityList.setEnabled(false);
+                    nbList.setEnabled(false);
                     SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
                         @Override
                         public Void doInBackground() throws IOException {
                             cities = Telelistas.getCities(state);
                             MainWindow.setCity(true, cities);
                             progress.setIndeterminate(false);
+                            cityList.setEnabled(true);
                             return null;
                         }
                     };
@@ -163,8 +165,8 @@ public class MainWindow {
         MainWindow.setCity(false, null);
 
         // Neighbourhood.
-        neighbourhoodList = new JComboBox<>();
-        neighbourhoodListener = new ActionListener() {
+        nbList = new JComboBox<>();
+        nbListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println(cityList.getSelectedItem());
@@ -195,7 +197,7 @@ public class MainWindow {
         panel.add(searchInput, "grow, split 7");
         panel.add(statesList, "growy");
         panel.add(cityList, "growy");
-        panel.add(neighbourhoodList, "growy, wrap");
+        panel.add(nbList, "growy, wrap");
         panel.add(searchButton, "grow, split 3");
         panel.add(phonesButton, "grow");
         panel.add(digitsButton, "wrap");
@@ -230,24 +232,24 @@ public class MainWindow {
 
     private static void setNeighbourhood(Boolean enabled, ArrayList neighbourhoods) {
         String placeholder = "Select the Neighbourhood";
-        if (neighbourhoodList != null) {
-            neighbourhoodList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+        if (nbList != null) {
+            nbList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
             if (enabled) {
-                neighbourhoodList.removeAllItems();
+                nbList.removeAllItems();
                 if (neighbourhoods.size() > 1) {
                     for (int i = 0; i < neighbourhoods.size(); i++) {
-                        neighbourhoodList.addItem((LocationBean) neighbourhoods.get(i));
+                        nbList.addItem((LocationBean) neighbourhoods.get(i));
                     }
                 } else {
-                    neighbourhoodList.addItem(Telelistas.setLocation(0, "Neighbourhood not found."));
+                    nbList.addItem(Telelistas.setLocation(0, "Neighbourhood not found."));
                 }
-                neighbourhoodList.addActionListener(neighbourhoodListener);
+                nbList.addActionListener(nbListener);
             } else {
-                neighbourhoodList.removeActionListener(neighbourhoodListener);
-                neighbourhoodList.addItem(Telelistas.setLocation(0, placeholder));
+                nbList.removeActionListener(nbListener);
+                nbList.addItem(Telelistas.setLocation(0, placeholder));
             }
-            neighbourhoodList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
-            neighbourhoodList.setEnabled(enabled);
+            nbList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+            nbList.setEnabled(enabled);
         }
     }
 
@@ -418,7 +420,7 @@ public class MainWindow {
                         progress.setIndeterminate(false);
 
                         // set and show the contact window information
-                        ContactDetails contact = new ContactDetails(window);
+                        DetailsWindow contact = new DetailsWindow(window);
 
                         contact.setContactInfo(Telelistas.getContactInfo(info.getLink()), contactsList);
 
