@@ -64,6 +64,32 @@ public class Telelistas {
         return cities;
     }
 
+    public static ArrayList<LocationBean> getNeighbourhood(String state, String city) {
+        ArrayList<LocationBean> cities = new ArrayList<>();
+        try {
+            cities.add(Telelistas.setLocation(0, "Select the Neighbourhood"));
+            Document doc = Jsoup.connect("https://www.telelistas.net/AjaxHandler.ashx")
+                    .data("state", state.toLowerCase())
+                    .data("style", "busca_interna_bairro")
+                    .data("selectedCity", city)
+                    .data("clientCityId", "pch_localidade_select")
+                    .data("selectedQuarter", "")
+                    .data("clientQuarterId", "pch_bairro_select")
+                    .data("method", "GetSearchQuartersNamed")
+                    .userAgent("Mozilla")
+                    .post();
+
+            for (Element e : doc.select("option")) {
+                if (!e.attr("value").isEmpty()) {
+                    cities.add(Telelistas.setLocation(Integer.parseInt(e.attr("value")), e.text()));
+                }
+            }
+        } catch (IOException ex) {
+            cities.add(Telelistas.setLocation(0, "Could not retrieve data: " + ex.getMessage()));
+        }
+        return cities;
+    }
+
     public static LocationBean setLocation(Integer id, String name) {
         LocationBean mockLocation = new LocationBean();
         mockLocation.setLocationID(id);

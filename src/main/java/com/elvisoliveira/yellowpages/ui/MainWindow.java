@@ -52,9 +52,14 @@ public class MainWindow {
     private static JButton phonesButton;
     private static JComboBox statesList;
     private static JComboBox<LocationBean> cityList;
+    private static JComboBox<LocationBean> neighbourhoodList;
     private static JButton digitsButton;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
+    private static ActionListener cityListener;
+    private static ActionListener neighbourhoodListener;
+    private static ArrayList<LocationBean> neighbourhood;
+    private static ArrayList<LocationBean> cities;
 
     private static final JFrame window = new JFrame("YellowPages");
     private static final JPanel panel = new JPanel();
@@ -114,29 +119,58 @@ public class MainWindow {
                     SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
                         @Override
                         public Void doInBackground() throws IOException {
-                            ArrayList cities = Telelistas.getCities(state);
-                            setCity(true, cities);
+                            cities = Telelistas.getCities(state);
+                            MainWindow.setCity(true, cities);
                             progress.setIndeterminate(false);
                             return null;
                         }
                     };
                     swingWorker.execute();
                 } else {
-                    setCity(false, null);
+                    MainWindow.setCity(false, null);
                 }
             }
         });
 
         // Cities.
-        cityList = new JComboBox<>();
-        cityList.addActionListener(new ActionListener() {
-
+        cityList = new JComboBox();
+        cityListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(statesList.getSelectedItem());
+                final String city = (String) cityList.getSelectedItem().toString();
+                final String state = (String) statesList.getSelectedItem().toString();
+                if (!"Select the City".equals(city)) {
+                    progress.setIndeterminate(true);
+                    SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
+                        @Override
+                        public Void doInBackground() throws IOException {
+                            for (LocationBean cityBean : cities) {
+                                if (city.equals(cityBean.getLocationName())) {
+                                    neighbourhood = Telelistas.getNeighbourhood(state, cityBean.getLocationID().toString());
+                                }
+                            }
+                            MainWindow.setNeighbourhood(true, neighbourhood);
+                            progress.setIndeterminate(false);
+                            return null;
+                        }
+                    };
+                    swingWorker.execute();
+                } else {
+                    MainWindow.setNeighbourhood(false, null);
+                }
             }
-        });
-        setCity(false, null);
+        };
+        MainWindow.setCity(false, null);
+
+        // Neighbourhood.
+        neighbourhoodList = new JComboBox<>();
+        neighbourhoodListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(cityList.getSelectedItem());
+            }
+        };
+        MainWindow.setNeighbourhood(false, null);
 
         // Get last two digits.
         digitsButton = new JButton();
@@ -160,7 +194,8 @@ public class MainWindow {
         panel.setLayout(new MigLayout(""));
         panel.add(searchInput, "grow, split 7");
         panel.add(statesList, "growy");
-        panel.add(cityList, "growy, wrap");
+        panel.add(cityList, "growy");
+        panel.add(neighbourhoodList, "growy, wrap");
         panel.add(searchButton, "grow, split 3");
         panel.add(phonesButton, "grow");
         panel.add(digitsButton, "wrap");
@@ -176,16 +211,46 @@ public class MainWindow {
     }
 
     private static void setCity(Boolean enabled, ArrayList cities) {
-        cityList.setEnabled(enabled);
-        cityList.removeAllItems();
-        if (enabled) {
-            for (int i = 0; i < cities.size(); i++) {
-                cityList.addItem((LocationBean) cities.get(i));
+        String placeholder = "Select the City";
+        if (cityList != null) {
+            if (enabled) {
+                cityList.removeAllItems();
+                for (int i = 0; i < cities.size(); i++) {
+                    cityList.addItem((LocationBean) cities.get(i));
+                }
+                cityList.addActionListener(cityListener);
+            } else {
+                cityList.addItem(Telelistas.setLocation(0, placeholder));
+                cityList.removeActionListener(cityListener);
             }
-        } else {
-            cityList.addItem(Telelistas.setLocation(0, "Select the City"));
+            cityList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+            cityList.setEnabled(enabled);
         }
     }
+
+    private static void setNeighbourhood(Boolean enabled, ArrayList neighbourhoods) {
+        String placeholder = "Select the Neighbourhood";
+        if (neighbourhoodList != null) {
+            neighbourhoodList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+            if (enabled) {
+                neighbourhoodList.removeAllItems();
+                if (neighbourhoods.size() > 1) {
+                    for (int i = 0; i < neighbourhoods.size(); i++) {
+                        neighbourhoodList.addItem((LocationBean) neighbourhoods.get(i));
+                    }
+                } else {
+                    neighbourhoodList.addItem(Telelistas.setLocation(0, "Neighbourhood not found."));
+                }
+                neighbourhoodList.addActionListener(neighbourhoodListener);
+            } else {
+                neighbourhoodList.removeActionListener(neighbourhoodListener);
+                neighbourhoodList.addItem(Telelistas.setLocation(0, placeholder));
+            }
+            neighbourhoodList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+            neighbourhoodList.setEnabled(enabled);
+        }
+    }
+
     public static void phonesButton() {
 
         // Add Column
