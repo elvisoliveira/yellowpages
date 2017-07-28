@@ -21,6 +21,6 @@ mvn dependency:copy-dependencies
 * Execute with all the dependencies
 
 ```bash
-java -cp "target/yellowpages-1.0-SNAPSHOT.jar;target/dependency/jsoup-1.7.3.jar" com.elvisoliveira.yellowpages.yellowpages
+java -cp "target/yellowpages-1.0-SNAPSHOT.jar;target/dependency/jsoup-1.7.3.jar;target/dependency/miglayout-3.7.4.jar" com.elvisoliveira.yellowpages.YellowPages
 ```
 
