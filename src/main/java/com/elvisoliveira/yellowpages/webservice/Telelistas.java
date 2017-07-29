@@ -21,11 +21,21 @@ public class Telelistas {
 
     private static String[] tokens;
 
-    public static Document generateDocument(String initName) throws UnsupportedEncodingException, IOException {
+    public static Document generateDocument(String name, String state, String city, String neighborhood) throws UnsupportedEncodingException, IOException {
 
-        String name = URLEncoder.encode(initName, "ISO-8859-1");
+        String nameEncoded = URLEncoder.encode(name, "ISO-8859-1");
 
-        String url = String.format("http://www.telelistas.net/templates/resultado_busca.aspx?q=&orgm=0&cod_localidade=31000&atividade=&nome=%s&uf_busca=mg&image.x=38&image.y=3", name);
+        String url = String.format("https://www.telelistas.net/templates/resultado_busca.aspx"
+                + "?q="
+                + "&cod_localidade=%s"
+                + "&cod_bairro=%s"
+                + "&cod_atividade="
+                + "&atividade_origem="
+                + "&atividade="
+                + "&nome=%s"
+                + "&uf_busca=%s"
+                + "&pch_localidade_select=%s"
+                + "&pch_bairro_select=%s", neighborhood, city, nameEncoded, state.toLowerCase(), neighborhood, city);
 
         Document doc = Jsoup.connect(url).userAgent("Mozilla").get();
 

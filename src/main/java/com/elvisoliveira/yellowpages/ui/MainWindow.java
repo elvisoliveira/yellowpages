@@ -310,8 +310,28 @@ public class MainWindow {
 
     private static void changeContacts(String name) throws IOException {
 
+        String city = cityList != null ? (String) cityList.getSelectedItem().toString() : null;
+        String neighborhood = nbList != null ? (String) nbList.getSelectedItem().toString() : null;
+
+        Integer citySubset = null;
+        Integer neighborhoodSubset = null;
+
+        for (int i = 0; i < neighbourhood.size(); i++) {
+            LocationBean nbLocation = (LocationBean) neighbourhood.get(i);
+            if (nbLocation.getLocationName().equals(neighborhood)) {
+                citySubset = nbLocation.getLocationID();
+            }
+        }
+
+        for (int i = 0; i < cities.size(); i++) {
+            LocationBean nbLocation = (LocationBean) cities.get(i);
+            if (nbLocation.getLocationName().equals(city)) {
+                neighborhoodSubset = nbLocation.getLocationID();
+            }
+        }
+
         // make the request and return the Document
-        Document document = Telelistas.generateDocument(name);
+        Document document = Telelistas.generateDocument(name, (String) statesList.getSelectedItem(), citySubset.toString(), neighborhoodSubset.toString());
 
         // from the requested Document, verify how many contacts were returned
         Integer total = Telelistas.totalContacts(document);
