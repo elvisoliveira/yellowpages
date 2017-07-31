@@ -50,13 +50,13 @@ public class MainWindow {
     private static JTextField searchInput;
     private static JButton searchButton;
     private static JButton phonesButton;
-    private static JComboBox statesList;
-    private static JComboBox<LocationBean> cityList;
-    private static JComboBox<LocationBean> nbList;
     private static JButton digitsButton;
+    private static JComboBox statesList;
+    private static JComboBox<LocationBean> ctList;
+    private static JComboBox<LocationBean> nbList;
     private static JProgressBar progress;
     private static List<ContactBean> contactsList;
-    private static ActionListener cityListener;
+    private static ActionListener ctListener;
     private static ActionListener nbListener;
     private static ArrayList<LocationBean> neighbourhood;
     private static ArrayList<LocationBean> cities;
@@ -115,7 +115,7 @@ public class MainWindow {
                 final String state = (String) statesList.getSelectedItem();
                 if (!"BR".equals(state)) {
                     progress.setIndeterminate(true);
-                    cityList.setEnabled(false);
+                    ctList.setEnabled(false);
                     nbList.setEnabled(false);
                     SwingWorker<Void, Void> swingWorker = new SwingWorker<Void, Void>() {
                         @Override
@@ -123,7 +123,7 @@ public class MainWindow {
                             cities = Telelistas.getCities(state);
                             MainWindow.setCity(true, cities);
                             progress.setIndeterminate(false);
-                            cityList.setEnabled(true);
+                            ctList.setEnabled(true);
                             return null;
                         }
                     };
@@ -135,11 +135,11 @@ public class MainWindow {
         });
 
         // Cities.
-        cityList = new JComboBox();
-        cityListener = new ActionListener() {
+        ctList = new JComboBox();
+        ctListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final String city = (String) cityList.getSelectedItem().toString();
+                final String city = (String) ctList.getSelectedItem().toString();
                 final String state = (String) statesList.getSelectedItem().toString();
                 if (!"Select the City".equals(city)) {
                     progress.setIndeterminate(true);
@@ -169,7 +169,7 @@ public class MainWindow {
         nbListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(cityList.getSelectedItem());
+                System.out.println(ctList.getSelectedItem());
             }
         };
         MainWindow.setNeighbourhood(false, null);
@@ -196,7 +196,7 @@ public class MainWindow {
         panel.setLayout(new MigLayout(""));
         panel.add(searchInput, "grow, split 7");
         panel.add(statesList, "growy");
-        panel.add(cityList, "growy");
+        panel.add(ctList, "growy");
         panel.add(nbList, "growy, wrap");
         panel.add(searchButton, "grow, split 3");
         panel.add(phonesButton, "grow");
@@ -214,19 +214,19 @@ public class MainWindow {
 
     private static void setCity(Boolean enabled, ArrayList cities) {
         String placeholder = "Select the City";
-        if (cityList != null) {
+        if (ctList != null) {
             if (enabled) {
-                cityList.removeAllItems();
+                ctList.removeAllItems();
                 for (int i = 0; i < cities.size(); i++) {
-                    cityList.addItem((LocationBean) cities.get(i));
+                    ctList.addItem((LocationBean) cities.get(i));
                 }
-                cityList.addActionListener(cityListener);
+                ctList.addActionListener(ctListener);
             } else {
-                cityList.addItem(Telelistas.setLocation(0, placeholder));
-                cityList.removeActionListener(cityListener);
+                ctList.addItem(Telelistas.setLocation(0, placeholder));
+                ctList.removeActionListener(ctListener);
             }
-            cityList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
-            cityList.setEnabled(enabled);
+            ctList.setPrototypeDisplayValue(Telelistas.setLocation(0, placeholder));
+            ctList.setEnabled(enabled);
         }
     }
 
@@ -310,7 +310,7 @@ public class MainWindow {
 
     private static void changeContacts(String name) throws IOException {
 
-        String city = cityList != null ? (String) cityList.getSelectedItem().toString() : null;
+        String city = ctList != null ? (String) ctList.getSelectedItem().toString() : null;
         String neighborhood = nbList != null ? (String) nbList.getSelectedItem().toString() : null;
 
         Integer citySubset = null;
